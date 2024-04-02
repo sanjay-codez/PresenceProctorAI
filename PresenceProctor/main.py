@@ -9,6 +9,19 @@ app.geometry("400x240")
 def button_function():
     print("Printed Button")
 
+
+optionmenu_var = customtkinter.StringVar(value="Dark")  # set initial value
+
+def optionmenu_callback(choice):
+    print("optionmenu dropdown clicked:", choice)
+
+combobox = customtkinter.CTkOptionMenu(master=app,
+                                       values=["Dark", "Light"],
+                                       command=optionmenu_callback,
+                                       variable=optionmenu_var)
+combobox.pack(padx=20, pady=10)
+
+
 # Use CTkButton instead of tkinter Button
 button = customtkinter.CTkButton(master=app, text="CTkButton", command=button_function)
 button.place(relx=0.5, rely=0.5, anchor=customtkinter.CENTER)
