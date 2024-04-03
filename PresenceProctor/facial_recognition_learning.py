@@ -15,13 +15,17 @@ face_match = False
 counter = 0
 lock = threading.Lock()
 
-def check_face(frame):
+def check_face(frame, filename):
     global face_match
     try:
         verified = DeepFace.verify(frame, reference_img)["verified"]
 
         with lock:
-            face_match = verified
+            if verified:
+                face_match = True
+                print("Match found with image:", filename)  # Print the filename on match
+            else:
+                face_match = False
     except ValueError:
         pass
 
@@ -29,14 +33,17 @@ def do_face_matching():
     global face_match, counter, reference_img
     while True:
 
-        reference_img = cv2.imread("images_data/" + str(image_files[counter % len(image_files)]))
+        # Get the current image filename
+        current_image_filename = image_files[counter % len(image_files)]
+        reference_img = cv2.imread("images_data/" + current_image_filename)
 
         ret, frame = cap.read()
         if ret:
             counter += 1
             if counter % 30 == 0:  # Check every 30 frames
                 try:
-                    threading.Thread(target=check_face, args=(frame.copy(),)).start()
+                    # Pass the current image filename to check_face function
+                    threading.Thread(target=check_face, args=(frame.copy(), current_image_filename)).start()
                 except RuntimeError:
                     pass
 
@@ -55,6 +62,7 @@ def do_face_matching():
 
     cap.release()
     cv2.destroyAllWindows()
+
 
 
 
