@@ -8,8 +8,7 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 files = os.listdir("images_data")
 image_files = [f for f in files if f.endswith(('.jpg', '.jpeg', '.png', '.gif'))]
-# Load reference image
-reference_img = cv2.imread("images_data/reference1.jpg")
+
 
 # Initialize variables
 face_match = False
@@ -26,10 +25,10 @@ def check_face(frame):
         pass
 
 def do_face_matching():
-    global face_match, counter
+    global face_match, counter, reference_img
     while True:
 
-        reference_img = cv2.imread("images_data/" + image_files[counter % len(image_files)])
+        reference_img = cv2.imread("images_data/" + str(image_files[counter % len(image_files)]))
 
         ret, frame = cap.read()
         if ret:
@@ -62,4 +61,4 @@ def do_face_matching():
 
 
 if __name__ == "__main__":
-    main()
+    do_face_matching()
