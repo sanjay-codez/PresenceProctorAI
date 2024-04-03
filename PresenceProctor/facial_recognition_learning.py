@@ -1,13 +1,15 @@
 import threading
 import cv2
 from deepface import DeepFace
+import os
 
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
+files = os.listdir("images_data")
+image_files = [f for f in files if f.endswith(('.jpg', '.jpeg', '.png', '.gif'))]
 # Load reference image
-reference_img = cv2.imread("reference1.jpg")
+reference_img = cv2.imread("images_data/reference1.jpg")
 
 # Initialize variables
 face_match = False
@@ -23,9 +25,12 @@ def check_face(frame):
     except ValueError:
         pass
 
-def main():
+def do_face_matching():
     global face_match, counter
     while True:
+
+        reference_img = cv2.imread("images_data/" + image_files[counter % len(image_files)])
+
         ret, frame = cap.read()
         if ret:
             counter += 1
@@ -49,6 +54,12 @@ def main():
 
     cap.release()
     cv2.destroyAllWindows()
+
+
+
+
+
+
 
 if __name__ == "__main__":
     main()
