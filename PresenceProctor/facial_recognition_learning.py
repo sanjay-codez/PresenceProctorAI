@@ -19,6 +19,7 @@ def check_face(frame):
     global face_match
     try:
         verified = DeepFace.verify(frame, reference_img)["verified"]
+
         with lock:
             face_match = verified
     except ValueError:
@@ -42,6 +43,7 @@ def do_face_matching():
             with lock:
                 if face_match:
                     cv2.putText(frame, "MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+
                 else:
                     cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
 
