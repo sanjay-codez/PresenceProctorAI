@@ -20,13 +20,14 @@ global counter =  0
 face_match = False
 lock = threading.Lock()
 
-def check_face(frame):
+def check_face(frame, reference_img):
     global face_match
     try:
         resized_frame = cv2.resize(frame, (300, 300))  # Resize frame for DeepFace
         verified = DeepFace.verify(resized_frame, reference_img)["verified"]
         with lock:
             face_match = verified
+        print("found: " + reference_img + "!")
     except ValueError:
         pass
 
