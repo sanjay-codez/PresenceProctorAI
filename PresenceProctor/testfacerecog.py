@@ -2,43 +2,43 @@ import cv2
 from deepface import DeepFace
 import os
 from multiprocessing.dummy import Pool as ThreadPool
-#f
+
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-files = os.listdir("images_data")
-image_files = [f for f in files if f.endswith(('.jpg', '.jpeg', '.png', '.gif'))]
-
-# Load reference image
-reference_img = cv2.imread("images_data/reference1.jpg")
+# Load reference images from the directory
+reference_images = {}
+directory = "images_data"
+for filename in os.listdir(directory):
+    if filename.endswith(('.jpg', '.jpeg', '.png', '.gif')):
+        reference_images[filename.split('.')[0]] = cv2.imread(os.path.join(directory, filename))
 
 # Initialize variables
-face_match = False
 lock = threading.Lock()
 
 def check_face(frame):
-    global face_match
+    matches = []
     try:
         resized_frame = cv2.resize(frame, (300, 300))  # Resize frame for DeepFace
-        verified = DeepFace.verify(resized_frame, reference_img)["verified"]
+        for name, reference_img in reference_images.items():
+            verified = DeepFace.verify(resized_frame, reference_img)["verified"]
+            if verified:
+                matches.append(name)
         with lock:
-            face_match = verified
+            return matches
     except ValueError:
         pass
 
 def do_face_matching():
-    global face_match
-    pool = ThreadPool(4)  # Number of threads
     while True:
         ret, frame = cap.read()
         if ret:
-            pool.map(check_face, [frame])  # Perform face verification in parallel
-            with lock:
-                if face_match:
-                    cv2.putText(frame, "MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
-                else:
-                    cv2.putText(frame, "NO MATCH!", (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
+            matches = check_face(frame)
+            if matches:
+                print("Match found for:", matches)
+            else:
+                print("No match found.")
 
             cv2.imshow("the_window", frame)
 
