@@ -4,13 +4,15 @@ import tkinter
 import customtkinter
 from PIL import Image
 import os
+import subprocess
 
 customtkinter.set_appearance_mode("dark")
 
+command = r'"C:\Users\austin.reynolds\Documents\GitHub\PresenceProctorAI\PresenceProctor\venv\Scripts\python.exe" "C:\Users\austin.reynolds\Documents\GitHub\PresenceProctorAI\PresenceProctor\C&P.py"'
 
 class App(customtkinter.CTk):
-    width = 1920
-    height = 1080
+    width = 500
+    height = 720
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,30 +47,37 @@ class App(customtkinter.CTk):
         self.login_button = customtkinter.CTkButton(self.login_frame, text="Login", command=self.login_event, width=200)
         self.login_button.grid(row=3, column=0, padx=30, pady=(15, 15))
 
+        ##############
+        # Main Frame #
+        ##############
+
         # create main frame
         self.main_frame = customtkinter.CTkFrame(self, corner_radius=0)
-        self.main_frame.grid_columnconfigure(0, weight=1)
+        self.main_frame.grid_columnconfigure(0, weight=100)
         self.main_label = customtkinter.CTkLabel(self.main_frame, text="PresenseProctor AI\nDashboard",
                                                  font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.main_label.grid(row=0, column=0, padx=30, pady=(30, 15))
+        self.main_label.grid(row=0, column=0, padx=0, pady=(30, 15))
         self.back_button = customtkinter.CTkButton(self.main_frame, text="Back", command=self.back_event, width=200)
-        self.back_button.grid(row=0, column=0, padx=30, pady=(30, 15))
+        self.back_button.grid(row=0, column=0, padx=600, pady=(15, 15))
 
     def login_event(self):
-        print("Login pressed - username:", self.username_entry.get(), "password:", self.password_entry.get())
         if self.username_entry.get() == "username" and self.password_entry.get() == "password":
             self.SignInLabel.configure(text="")
             self.username_entry.delete(first_index=0, last_index=10000)
             self.password_entry.delete(first_index=0, last_index=10000)
             self.login_frame.grid_forget()  # remove login frame
-            self.main_frame.grid(row=0, column=0, sticky="nsew", padx=100)  # show main frame
+
+            # Separate the Python executable path and the script file path as separate arguments
+            python_exe_path = r'C:\Users\austin.reynolds\Documents\GitHub\PresenceProctorAI\PresenceProctor\venv\Scripts\python.exe'
+            script_file_path = r'C:\Users\austin.reynolds\Documents\GitHub\PresenceProctorAI\PresenceProctor\C&P.py'
+
+            # Execute the command with both paths as separate arguments
+            subprocess.Popen([python_exe_path, script_file_path])
         else:
             self.login_frame.grid(row=0, column=0, sticky="ns")  # show login frame
             self.SignInLabel.configure(text="Wrong Username or Password,\n Please try again.")
             self.username_entry.delete(first_index=0, last_index=10000)
             self.password_entry.delete(first_index=0, last_index=10000)
-
-            print("Password did not work")
 
 
 

@@ -2,22 +2,29 @@ import tkinter
 import tkinter.messagebox
 import customtkinter
 
+
+
 customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 
 class App(customtkinter.CTk):
+    width = 1920
+    height = 1080
+
     def __init__(self):
         super().__init__()
 
         # configure window
         self.title("CustomTkinter complex_example.py")
-        self.geometry(f"{1100}x{580}")
+        self.geometry(f"{1920}x{1080}")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
+
+
 
         # create sidebar frame with widgets
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
@@ -157,6 +164,7 @@ class App(customtkinter.CTk):
 
     def sidebar_button_event(self):
         print("sidebar_button click")
+
 
 
 if __name__ == "__main__":
