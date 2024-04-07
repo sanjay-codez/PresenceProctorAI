@@ -20,15 +20,15 @@ def check_face(frame):
     global face_match
     global last_match_time
     try:
-        result = DeepFace.verify(img1_path=frame, img2_path=reference_img, enforce_detection=False)
+        result = DeepFace.verify(img1_path=frame, img2_path=reference_img, enforce_detection=True)
         with lock:
             if result['verified']:
                 face_match = True
                 last_match_time = time.time()  # Update the last match time on success
             else:
                 face_match = False
-    except Exception as e:
-        print(e)
+    except:
+        pass
 
 while True:
     ret, frame = cap.read()
