@@ -1,3 +1,5 @@
+import time
+
 import customtkinter
 import tkinter
 
@@ -20,9 +22,9 @@ class App(customtkinter.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.title("CustomTkinter example_background_image.py")
+        self.title("PresenceProctor Login Panel")
         self.geometry(f"{self.width}x{self.height}")
-        self.resizable(True,True)
+        self.resizable(False,False)
 
         # load and create background image
         current_path = os.path.dirname(os.path.realpath(__file__))
@@ -76,6 +78,8 @@ class App(customtkinter.CTk):
 
             # Execute the command with both paths as separate arguments
             subprocess.Popen([python_exe_path, script_file_path])
+            time.sleep(1)
+            sys.exit()
         else:
             self.login_frame.grid(row=0, column=0, sticky="ns")  # show login frame
             self.SignInLabel.configure(text="Wrong Username or Password,\n Please try again.")
