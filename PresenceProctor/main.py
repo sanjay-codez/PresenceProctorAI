@@ -5,10 +5,13 @@ import customtkinter
 from PIL import Image
 import os
 import subprocess
+import sys
 
 customtkinter.set_appearance_mode("dark")
 
-command = r'"C:\Users\austin.reynolds\Documents\GitHub\PresenceProctorAI\PresenceProctor\venv\Scripts\python.exe" "C:\Users\austin.reynolds\Documents\GitHub\PresenceProctorAI\PresenceProctor\C&P.py"'
+
+#current_directory = os.path.dirname(os.path.abspath(__file__))
+#parent_directory = os.path.dirname(current_directory)
 
 class App(customtkinter.CTk):
     width = 500
@@ -68,8 +71,8 @@ class App(customtkinter.CTk):
             self.login_frame.grid_forget()  # remove login frame
 
             # Separate the Python executable path and the script file path as separate arguments
-            python_exe_path = r'C:\Users\austin.reynolds\Documents\GitHub\PresenceProctorAI\PresenceProctor\venv\Scripts\python.exe'
-            script_file_path = r'C:\Users\austin.reynolds\Documents\GitHub\PresenceProctorAI\PresenceProctor\C&P.py'
+            python_exe_path = sys.executable
+            script_file_path = os.path.dirname(os.path.abspath(__file__)) + "\C&P.py"
 
             # Execute the command with both paths as separate arguments
             subprocess.Popen([python_exe_path, script_file_path])
