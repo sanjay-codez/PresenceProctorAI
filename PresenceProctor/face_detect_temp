@@ -1,0 +1,8 @@
+# this is how you import it btw
+from face_recognition import detect_face_in_video
+
+# Pass in the path to the image file as parameter
+# You get True or False
+result = detect_face_in_video("images_data/Sanjay.jpg")
+print(f"Face Detected: {result}")
+
