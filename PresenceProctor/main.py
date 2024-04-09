@@ -79,7 +79,7 @@ class App(customtkinter.CTk):
             # Execute the command with both paths as separate arguments
             subprocess.Popen([python_exe_path, script_file_path])
             time.sleep(1)
-            sys.exit()
+            self.quit()
         else:
             self.login_frame.grid(row=0, column=0, sticky="ns")  # show login frame
             self.SignInLabel.configure(text="Wrong Username or Password,\n Please try again.")
