@@ -13,39 +13,27 @@ cursor.execute('''
         last_name TEXT,
         gender TEXT,
         parent_email TEXT,
-        photo_url TEXT,
+        photo_url TEXT
+        
         
     )
 ''')
 
-# Create Attendance table
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Attendance (
-        attendance_id INTEGER PRIMARY KEY,
-        student_id INTEGER,
-        check_in_time DATETIME,
-        status TEXT,
-        FOREIGN KEY (student_id) REFERENCES Students(student_id)
-    )
-''')
+#check_in_time DATETIME
+#status TEXT
 
 # Sample data for Students table
 students_data = [
-    (1, 'Sanjay', 'Krishnan', 'Male', 'sanjaysparents@gmail.com', 'images_data/Sanjay.jpg'),
-    (2, 'Jane', 'Doe', 'Female', 'jane.doth@gmail.com', 'images_data/Elon Musk.jpg'),
-]
-
-# Sample data for Attendance table
-attendance_data = [
-    (1, 1, '2024-04-01 08:00:00', 'Present'),
-    (2, 1, '2024-04-01 08:05:00', 'Late'),
-    (3, 2, '2024-04-01 08:00:00', 'Present'),
-    # Add more sample data as needed
+    (1, 'Adit', 'Tripathi', 'Male', 'aditsparents@gmail.com', 'images_data/Adit.jpg'),
+    (2, 'Carlos', 'LastName', 'Male', 'carlosparents@gmail.com', 'images_data/Carlos.jpg'),
+    (3, 'Alex', 'Tran', 'Male', 'alexsparents@gmail.com', 'images_data/Alex.jpg'),
+    (4, 'Jack', 'Wise', 'Male', 'jacksparents@gmail.com', 'images_data/Jack.jpg'),
+    (5, 'Johnny', 'Nguyen', 'Male', 'johnnysparents@gmail.com', 'images_data/Johnny.jpg'),
+    (6, 'Sanjay', 'Krishnan', 'Male', 'sanjaysparents@gmail.com', 'images_data/Sanjay.jpg')
 ]
 
 # Insert sample data into Students table
-cursor.executemany('INSERT INTO Students (student_id, first_name, last_name, gender, parent_email, photo_url, check_in_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', students_data)
-
+cursor.executemany('INSERT or IGNORE INTO Students (student_id, first_name, last_name, gender, parent_email, photo_url) VALUES (?, ?, ?, ?, ?, ?)', students_data)
 
 """"
 # Filters out the students that are absent or late
