@@ -13,7 +13,8 @@ cursor.execute('''
         last_name TEXT,
         gender TEXT,
         parent_email TEXT,
-        photo_url TEXT
+        photo_url TEXT,
+        
     )
 ''')
 
@@ -43,10 +44,8 @@ attendance_data = [
 ]
 
 # Insert sample data into Students table
-cursor.executemany('INSERT INTO Students (student_id, first_name, last_name, gender, parent_email, photo_url) VALUES (?, ?, ?, ?, ?, ?)', students_data)
+cursor.executemany('INSERT INTO Students (student_id, first_name, last_name, gender, parent_email, photo_url, check_in_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', students_data)
 
-# Insert sample data into Attendance table
-cursor.executemany('INSERT INTO Attendance (attendance_id, student_id, check_in_time, status) VALUES (?, ?, ?, ?)', attendance_data)
 
 """"
 # Filters out the students that are absent or late
