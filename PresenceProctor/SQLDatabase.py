@@ -1,4 +1,3 @@
-
 import sqlite3
 
 # Connect to the SQLite database (or create a new one if it doesn't exist)
@@ -14,13 +13,13 @@ cursor.execute('''
         gender TEXT,
         parent_email TEXT,
         photo_url TEXT
-        
-        
+
+
     )
 ''')
 
-#check_in_time DATETIME
-#status TEXT
+# check_in_time DATETIME
+# status TEXT
 
 # Sample data for Students table
 students_data = [
@@ -33,7 +32,9 @@ students_data = [
 ]
 
 # Insert sample data into Students table
-cursor.executemany('INSERT or IGNORE INTO Students (student_id, first_name, last_name, gender, parent_email, photo_url) VALUES (?, ?, ?, ?, ?, ?)', students_data)
+cursor.executemany(
+    'INSERT or IGNORE INTO Students (student_id, first_name, last_name, gender, parent_email, photo_url) VALUES (?, ?, ?, ?, ?, ?)',
+    students_data)
 
 """"
 # Filters out the students that are absent or late

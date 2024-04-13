@@ -46,8 +46,8 @@ def detect_face_in_video(file_path):
                     cv2.destroyAllWindows()
                     return True
 
-                # Check if the last match was more than 7 seconds ago or 7 seconds have passed since the start without a match
-                if time.time() - last_match_time > 7 or time.time() - start_time > 7:
+                # Check if the last match was more than 10 seconds ago or 10 seconds have passed since the start without a match
+                if time.time() - last_match_time > 10 or time.time() - start_time > 10:
                     cap.release()
                     cv2.destroyAllWindows()
                     return False
