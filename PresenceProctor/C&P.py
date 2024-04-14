@@ -6,7 +6,7 @@ import os
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
-username = "Teacher"
+username = "Sir"
 
 class App(customtkinter.CTk):
     width = 1920
@@ -15,7 +15,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-        # configure window
+        ### configure window ###
         self.title("PresenceProctor AI")
         self.geometry(f"{1920}x{1080}")
 
@@ -25,7 +25,7 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
 
-        # START OF HOME TAB #
+        ### START OF HOME TAB ###
         # create sidebar frame with widgets
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
@@ -41,12 +41,11 @@ class App(customtkinter.CTk):
 
         # Welcome Label #
         self.welcomeLabel = customtkinter.CTkLabel(self.homeFrame, text="Welcome, " + username, font=customtkinter.CTkFont(size=60, weight="bold"))
-        self.welcomeLabel.grid(row=3, column=8, padx=0, pady=(10, 10))
-
-        # END OF HOME FRAME #
+        self.welcomeLabel.grid(row=3, column=8, padx=0, pady=(70, 70))
+        ### END OF HOME FRAME ###
 
         # Replace logo image with cropped logo image
-        self.logo_image = customtkinter.CTkImage(Image.open(current_path + "/test_images/logo.png"),
+        self.logo_image = customtkinter.CTkImage(Image.open(current_path + "/test_images/logo1.png"),
                                                size=(150, 150))
         self.logo_image = customtkinter.CTkLabel(self.sidebar_frame,text="", image=self.logo_image)
         self.logo_image.grid(row=0, column=0)
@@ -74,12 +73,46 @@ class App(customtkinter.CTk):
         self.label_frame.grid(row=0, column=1, sticky = "n")
         self.main_label = customtkinter.CTkLabel(self.label_frame, text="PresenseProctor Dashboard", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.main_label.grid(row=0, column=0, padx=10, pady=(10, 15))
-        # Setting Default Values #
 
+        # Setting Default Values #
         self.scaling_optionemenu.set("100%")
         self.appearance_mode_optionemenu.set("Dark")
-        # END OF HOME TAB #
+        ### END OF HOME TAB ###
 
+        ### START OF ATTENDANCE FRAME ###
+        self.attendanceFrame = customtkinter.CTkFrame(self, width=self.width, corner_radius=0)
+        self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+        self.attendanceFrame.grid_columnconfigure(0, weight=1)
+        self.attendanceFrame.grid_rowconfigure(0, weight=0)  # Title row shouldn't stretch
+        self.attendanceFrame.grid_rowconfigure(1, weight=1)  # Content below the title should stretch
+
+        # Add a title label to the attendance frame at the top
+        self.attendanceLabel = customtkinter.CTkLabel(self.attendanceFrame, text="Take Attendance",
+                                                      font=customtkinter.CTkFont(size=60, weight="bold"))
+        self.attendanceLabel.grid(row=0, column=0, padx=20, pady=(20, 0), sticky="n")
+
+        # Initially, the attendance frame should not be visible, so we use grid_forget
+        self.attendanceFrame.grid_forget()
+        ### END OF ATTENDANCE FRAME ###
+
+        ### START OF SETUP FRAME ###
+        self.setupFrame = customtkinter.CTkFrame(self, width=self.width, corner_radius=0)
+        self.setupFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+        self.setupFrame.grid_columnconfigure(0, weight=1)
+        # Adjust the row configuration for proper layout; make row 0 (title) less stretchable
+        self.setupFrame.grid_rowconfigure(0, weight=0)
+        self.setupFrame.grid_rowconfigure(1, weight=1)  # Add this to make content below the title stretchable
+
+        # Place the label at the top (row 0) of the setup frame
+        self.setupLabel = customtkinter.CTkLabel(self.setupFrame, text="Setup Students Page",
+                                                 font=customtkinter.CTkFont(size=60, weight="bold"))
+        # Use sticky="n" to stick the label to the top of the grid cell.
+        self.setupLabel.grid(row=0, column=0, padx=20, pady=(20, 0), sticky="n")
+
+        # Rest of the setup frame widgets should start from row 1 or further down.
+
+        self.setupFrame.grid_forget()
+        ### END OF SETUP FRAME ###
 
     def open_input_dialog_event(self):
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
@@ -93,15 +126,23 @@ class App(customtkinter.CTk):
         customtkinter.set_widget_scaling(new_scaling_float)
 
     def home_button_event(self):
+        self.attendanceFrame.grid_forget()
+        self.setupFrame.grid_forget()
         self.homeFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
-
 
     def attendance_button_event(self):
         self.homeFrame.grid_forget()
-
+        self.setupFrame.grid_forget()
+        self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
 
     def setup_button_event(self):
-        pass
+        # Hide the other frames
+        self.homeFrame.grid_forget()
+        self.attendanceFrame.grid_forget()
+        # Show the setup frame
+        self.setupFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+
+
 
 
 if __name__ == "__main__":
