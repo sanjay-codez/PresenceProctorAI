@@ -135,13 +135,9 @@ class App(customtkinter.CTk):
 
         # Error label to display errors
         self.error_message = tkinter.StringVar()
-        # self.error_label = customtkinter.CTkLabel(self.setupFrame, textvariable=self.error_message, fg_color=None,
-        #                                           text_color='red')
-
-        self.error_label = customtkinter.CTkLabel(self.setupFrame, textvariable=self.error_message,
-                                                  font=customtkinter.CTkFont(size=10, weight="bold"))
-
-        self.error_label.grid(row=3, column=0, columnspan=1, padx=50, pady=(0, 500), sticky="n")
+        self.error_label = customtkinter.CTkLabel(self.setupFrame, textvariable=self.error_message, fg_color=None,
+                                                  text_color='red')
+        self.error_label.grid(row=3, column=0, padx=error_label_padx, pady=error_label_pady, sticky="n")
 
         # Adjust padding and size for entries and buttons here
         entry_padx = 10
@@ -213,20 +209,20 @@ class App(customtkinter.CTk):
         # Validation for First and Last Name
         first_name = self.firstNameEntry.get().strip()
         if not first_name or len(first_name) < 2 or not first_name[0].isupper():
-            self.error_message.set("First Name : Invalid First Name\n First Name : Capitalize first letter\n First Name : Minimum length: 2")
+            self.error_message.set("Invalid First Name\n - capitalize first letter\n - minimum length: 2")
             self.firstNameEntry.delete(0, tkinter.END)  # Clear the entry field
             return
 
         last_name = self.lastNameEntry.get().strip()
         if not last_name or len(last_name) < 2 or not last_name[0].isupper():
-            self.error_message.set("Last Name : Invalid Last Name\n Last Name : Capitalize first letter\n Last Name : Minimum length: 2")
+            self.error_message.set("Invalid Last Name\n - capitalize first letter\n - minimum length: 2")
             self.lastNameEntry.delete(0, tkinter.END)  # Clear the entry field
             return
 
         # Validation for Email using regex
         email = self.emailEntry.get().strip()
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            self.error_message.set("Invalid email address.\nOr left blank")
+            self.error_message.set("Invalid email address.")
             self.emailEntry.delete(0, tkinter.END)  # Clear the entry field
             return
 
