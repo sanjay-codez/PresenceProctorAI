@@ -98,18 +98,69 @@ class App(customtkinter.CTk):
         ### START OF SETUP FRAME ###
         self.setupFrame = customtkinter.CTkFrame(self, width=self.width, corner_radius=0)
         self.setupFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
-        self.setupFrame.grid_columnconfigure(0, weight=1)
-        # Adjust the row configuration for proper layout; make row 0 (title) less stretchable
-        self.setupFrame.grid_rowconfigure(0, weight=0)
-        self.setupFrame.grid_rowconfigure(1, weight=1)  # Add this to make content below the title stretchable
 
-        # Place the label at the top (row 0) of the setup frame
+        # Adjust the column configuration for a centered look
+        self.setupFrame.grid_columnconfigure(0, weight=1)
+        self.setupFrame.grid_columnconfigure(1, minsize=600, weight=0)  # Control the width of the center column
+        self.setupFrame.grid_columnconfigure(2, weight=1)
+        self.setupFrame.grid_rowconfigure(1, weight=1)
+        self.setupFrame.grid_rowconfigure(2, weight=1)
+        self.setupFrame.grid_rowconfigure(3, weight=2)
+        # Adjust the column configuration for a centered look with a slight offset to the left
+
+
+        # Place the label at the top of the setup frame, centered
         self.setupLabel = customtkinter.CTkLabel(self.setupFrame, text="Setup Students Page",
                                                  font=customtkinter.CTkFont(size=60, weight="bold"))
-        # Use sticky="n" to stick the label to the top of the grid cell.
-        self.setupLabel.grid(row=0, column=0, padx=20, pady=(20, 0), sticky="n")
 
-        # Rest of the setup frame widgets should start from row 1 or further down.
+        self.setupLabel.grid(row=0, column=0, columnspan=3, sticky="n")
+
+        # Add Subtitle
+        self.addStudentLabel = customtkinter.CTkLabel(self.setupFrame, text="Add Student",
+                                                      font=customtkinter.CTkFont(size=30), fg_color=None,
+                                                      text_color='white')
+        self.addStudentLabel.grid(row=1, column=0, sticky="s")
+
+
+
+        # Student Setup Section, using the column 1 with controlled width
+        self.studentSetupSection = customtkinter.CTkFrame(self.setupFrame, corner_radius=10)
+        self.studentSetupSection.grid(row=2, column=0, sticky="n", padx=50, pady=20)
+
+        # Adjust padding and size for entries and buttons here
+        entry_padx = 10
+        entry_pady = 5
+        entry_ipady = 5  # internal padding for height
+
+        # First Name Entry
+        self.firstNameEntry = customtkinter.CTkEntry(self.studentSetupSection, placeholder_text="First Name")
+        self.firstNameEntry.grid(row=1, column=0, padx=entry_padx, pady=entry_pady, sticky="ew", ipady=entry_ipady)
+
+        # Last Name Entry
+        self.lastNameEntry = customtkinter.CTkEntry(self.studentSetupSection, placeholder_text="Last Name")
+        self.lastNameEntry.grid(row=2, column=0, padx=entry_padx, pady=entry_pady, sticky="ew", ipady=entry_ipady)
+
+        # Gender Selection Label
+        self.genderLabel = customtkinter.CTkLabel(self.studentSetupSection, text="Gender:")
+        self.genderLabel.grid(row=3, column=0, padx=(entry_padx, 0), pady=entry_pady, sticky="w")
+
+        # Gender Radio Buttons
+        self.genderVar = tkinter.StringVar(value="M")
+        self.maleRadioButton = customtkinter.CTkRadioButton(self.studentSetupSection, text="Male",
+                                                            variable=self.genderVar, value="M")
+        self.maleRadioButton.grid(row=4, column=0, padx=(entry_padx, 2), pady=2, sticky="w")
+        self.femaleRadioButton = customtkinter.CTkRadioButton(self.studentSetupSection, text="Female",
+                                                              variable=self.genderVar, value="F")
+        self.femaleRadioButton.grid(row=4, column=0, padx=(entry_padx + 100, 2), pady=2, sticky="w")
+
+        # Email Entry
+        self.emailEntry = customtkinter.CTkEntry(self.studentSetupSection, placeholder_text="Email")
+        self.emailEntry.grid(row=5, column=0, padx=entry_padx, pady=entry_pady, sticky="ew", ipady=entry_ipady)
+
+        # Submit Button
+        self.submitButton = customtkinter.CTkButton(self.studentSetupSection, text="Submit",
+                                                    command=self.submit_student_info)
+        self.submitButton.grid(row=6, column=0, padx=entry_padx, pady=(entry_pady, 20))
 
         self.setupFrame.grid_forget()
         ### END OF SETUP FRAME ###
@@ -141,6 +192,25 @@ class App(customtkinter.CTk):
         self.attendanceFrame.grid_forget()
         # Show the setup frame
         self.setupFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+
+    def submit_student_info(self):
+        # Placeholder function to handle the submit action
+        # You would collect the data from the entry fields here and process it
+        first_name = self.firstNameEntry.get()
+        last_name = self.lastNameEntry.get()
+        gender = self.genderVar.get()
+        email = self.emailEntry.get()
+        print(f"Submitted: {first_name}, {last_name}, {gender}, {email}")
+
+        ####################################
+        ####################################
+        ####################################
+
+        # ADD THE CSV STUFF LOGIC HERE AND THEN REMOVE THE PRINT STATEMENT
+
+        ####################################
+        ####################################
+        ####################################
 
 
 
