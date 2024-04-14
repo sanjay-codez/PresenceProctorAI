@@ -228,7 +228,8 @@ class App(customtkinter.CTk):
         self.attendanceFrame.grid_forget()
         # Show the setup frame
         self.setupFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
-        self.create_student_table()  # Call this to show the table when you go to the setup tab
+        self.create_student_table()
+        self.setup_table_buttons()  # Create edit and delete buttons when setup tab is shown
 
     def submit_student_info(self):
         # Validation for First and Last Name
@@ -332,33 +333,54 @@ class App(customtkinter.CTk):
 
         self.setup_table_buttons()  # Set up buttons after loading data
 
-
-
-
-
     def setup_table_buttons(self):
-        for child in self.tree.get_children():
-            item = self.tree.item(child)
+        # Remove previous buttons if they exist
+        try:
+            self.edit_button.destroy()
+            self.delete_button.destroy()
+        except AttributeError:
+            pass  # Buttons were not yet created
+
+        # Define a maximum button width
+        button_width = 100  # You can adjust this value as needed
+
+        # Create Edit Button
+        self.edit_button = customtkinter.CTkButton(self.setupFrame, text="Edit",
+                                                   command=self.edit_student, width=button_width)
+        self.edit_button.grid(row=3, column=1, pady=(5, 400), padx=(0, 1100), sticky="")
+
+        # Create Delete Button
+        self.delete_button = customtkinter.CTkButton(self.setupFrame, text="Delete",
+                                                     command=self.delete_student, width=button_width)
+        self.delete_button.grid(row=3, column=1, pady=(5, 400), padx=(0, 900), sticky="")
+
+        # Adjust the grid row and column configurations to align buttons
+        self.setupFrame.grid_columnconfigure(1, weight=0)  # Remove weight from column where the button is
+        self.setupFrame.grid_columnconfigure(2, weight=0)  # Remove weight from column where the button is
+
+    def edit_student(self):
+        selected = self.tree.selection()
+        if selected:
+            item = self.tree.item(selected[0])
             values = item['values']
+            # Logic for editing the student
+            print("Edit:", values)  # Replace with your editing logic
+        else:
+            tkinter.messagebox.showinfo("Edit", "Please select a student to edit.")
 
-            # Add Edit Button
-            edit_button = customtkinter.CTkButton(self.setupFrame, text="Edit",
-                                                      command=lambda v=values: self.edit_student(v))
-            edit_button.grid(row=self.tree.index(child) + 1, column=2)
-
-            # Add Delete Button
-            delete_button = customtkinter.CTkButton(self.setupFrame, text="Delete",
-                                                        command=lambda v=values: self.delete_student(v))
-            delete_button.grid(row=self.tree.index(child) + 1, column=3)
-            pass
-
-    def edit_student(self, values):
-        # Placeholder for the edit functionality
-        pass
-
-    def delete_student(self, values):
-        # Placeholder for the delete functionality
-        pass
+    def delete_student(self):
+        selected = self.tree.selection()
+        if selected:
+            item = self.tree.item(selected[0])
+            values = item['values']
+            # Logic for deleting the student
+            print("Delete:", values)  # Replace with your deletion logic
+            response = tkinter.messagebox.askyesno("Delete", "Are you sure you want to delete this student?")
+            if response:
+                # Add your code here to delete the student from the CSV and reload the table
+                pass
+        else:
+            tkinter.messagebox.showinfo("Delete", "Please select a student to delete.")
 
 if __name__ == "__main__":
     app = App()
