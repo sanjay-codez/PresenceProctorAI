@@ -1,4 +1,5 @@
-import tkinter
+import tkinter as tk
+from tkinter import ttk
 import tkinter.messagebox
 import customtkinter
 from PIL import Image
@@ -80,6 +81,25 @@ class App(customtkinter.CTk):
         self.scaling_optionmenu.set("100%")
         self.appearance_mode_optionmenu.set("Dark")
         ### END OF HOME TAB ###
+
+        # Style configuration for the Treeview to make it dark
+        style = ttk.Style(self)
+        style.theme_use("clam")  # 'clam' theme supports customizing colors, choose the theme that suits your OS
+
+        # Configure the Treeview colors
+        style.configure("Treeview",
+                        background="#333333",
+                        fieldbackground="#333333",
+                        foreground="white",
+                        rowheight=25)  # Adjust the height of rows if needed
+
+        # Configure the Treeview Heading colors (Treeview.Heading)
+        style.configure("Treeview.Heading",
+                        background="#333333",
+                        foreground="white")
+
+        # Change selected color
+        style.map('Treeview', background=[('selected', '#0a82cc')])  # Adjust selected color if needed
 
         ### START OF ATTENDANCE FRAME ###
         self.attendanceFrame = customtkinter.CTkFrame(self, width=self.width, corner_radius=0)
@@ -208,6 +228,7 @@ class App(customtkinter.CTk):
         self.attendanceFrame.grid_forget()
         # Show the setup frame
         self.setupFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+        self.create_student_table()  # Call this to show the table when you go to the setup tab
 
     def submit_student_info(self):
         # Validation for First and Last Name
@@ -274,8 +295,70 @@ class App(customtkinter.CTk):
         # Show success message
         self.error_message.set("Student information successfully added.")
 
+    def create_student_table(self):
+        # Treeview
+        self.tree = ttk.Treeview(self.setupFrame, columns=('First Name', 'Last Name', 'Gender', 'Email'), height=10,
+                                 show='headings', style="Treeview")  # Added style argument here
+        for col in self.tree['columns']:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=150)  # Adjust the column's width if necessary
+
+        # Scrollbar
+        self.scrollbar = ttk.Scrollbar(self.setupFrame, orient=tk.VERTICAL, command=self.tree.yview)
+        self.tree.configure(yscroll=self.scrollbar.set)
+
+        # Adjust grid placements for the treeview and scrollbar
+        self.tree.grid(row=2, column=1, sticky='nsew', padx=(10, 0))  # Adjust row and column index if needed
+        self.scrollbar.grid(row=2, column=2, sticky='ns', padx=(0, 10))  # Adjust row and column index if needed
+
+        # Grid configuration for the treeview
+        self.setupFrame.grid_rowconfigure(2, weight=1)
+        self.setupFrame.grid_columnconfigure(1, weight=1)
+
+        # Load Data
+        self.load_data()
+
+    def load_data(self):
+        # Load data from CSV and insert into the treeview
+        try:
+            with open('student_data.csv', 'r', newline='') as file:
+                self.tree.delete(*self.tree.get_children())  # Clear current items
+                reader = csv.DictReader(file)
+                for row in reader:
+                    self.tree.insert('', 'end',
+                                     values=(row['First Name'], row['Last Name'], row['Gender'], row['Email']))
+        except FileNotFoundError:
+            pass  # File doesn't exist yet, nothing to load
+
+        self.setup_table_buttons()  # Set up buttons after loading data
 
 
+
+
+
+    def setup_table_buttons(self):
+        for child in self.tree.get_children():
+            item = self.tree.item(child)
+            values = item['values']
+
+            # Add Edit Button
+            edit_button = customtkinter.CTkButton(self.setupFrame, text="Edit",
+                                                      command=lambda v=values: self.edit_student(v))
+            edit_button.grid(row=self.tree.index(child) + 1, column=2)
+
+            # Add Delete Button
+            delete_button = customtkinter.CTkButton(self.setupFrame, text="Delete",
+                                                        command=lambda v=values: self.delete_student(v))
+            delete_button.grid(row=self.tree.index(child) + 1, column=3)
+            pass
+
+    def edit_student(self, values):
+        # Placeholder for the edit functionality
+        pass
+
+    def delete_student(self, values):
+        # Placeholder for the delete functionality
+        pass
 
 if __name__ == "__main__":
     app = App()
