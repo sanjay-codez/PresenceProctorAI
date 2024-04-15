@@ -6,3 +6,25 @@ from face_recognition import detect_face_in_video
 result = detect_face_in_video("images_data/Sanjay.jpg")
 print(f"Face Detected: {result}")
 
+
+# import requests
+# from datetime import datetime
+#
+# def get_current_date():
+#     # Using the World Time API to get the current datetime
+#     response = requests.get('http://worldtimeapi.org/api/timezone/Etc/UTC')
+#     data = response.json()
+#     # Adjust the datetime string to ensure proper timezone format
+#     datetime_string = data['datetime']
+#     if datetime_string[-3] == ':':
+#         datetime_string = datetime_string  # If correct format, do nothing
+#     else:
+#         # Fix the timezone part if not in expected format
+#         datetime_string = datetime_string[:-2] + ':' + datetime_string[-2:]
+#
+#     current_datetime = datetime.fromisoformat(datetime_string)  # Parse the corrected ISO datetime format
+#     return current_datetime.strftime('%m/%d/%Y')  # Format the date as MM/DD/YYYY
+#
+# # Call the function and print the result
+# current_date = get_current_date()
+# print(current_date)

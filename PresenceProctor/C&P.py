@@ -6,10 +6,25 @@ from PIL import Image
 import os
 import re
 import csv
+import requests
+from datetime import datetime
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
+customtkinter.set_default_color_theme("green")  # Themes: "blue" (standar d), "green", "dark-blue"
 username = "Sir"
+
+# call the function and returns MM/DD/YYYY
+def get_current_date():
+    response = requests.get('http://worldtimeapi.org/api/timezone/Etc/UTC')
+    data = response.json()
+    datetime_string = data['datetime']
+    if datetime_string[-3] == ':':
+        datetime_string = datetime_string
+    else:
+        datetime_string = datetime_string[:-2] + ':' + datetime_string[-2:]
+    current_datetime = datetime.fromisoformat(datetime_string)
+    return current_datetime.strftime('%m/%d/%Y')
+
 
 class App(customtkinter.CTk):
     width = 1920
@@ -68,7 +83,7 @@ class App(customtkinter.CTk):
         self.appearance_mode_optionmenu.grid(row=9, column=0, padx=20, pady=(10, 10))
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
         self.scaling_label.grid(row=10, column=0, padx=20, pady=(10, 0))
-        self.scaling_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%", "110%", "120%", "150%", ],
+        self.scaling_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["100%"],
                                                               command=self.change_scaling_event)
         self.scaling_optionmenu.grid(row=11, column=0, padx=20, pady=(10, 20))
         # Name label #
@@ -381,6 +396,10 @@ class App(customtkinter.CTk):
                 pass
         else:
             tkinter.messagebox.showinfo("Delete", "Please select a student to delete.")
+
+
+
+
 
 if __name__ == "__main__":
     app = App()
