@@ -1,7 +1,7 @@
 First Name,Last Name,Gender,Email,Presence
 Sanjay,Krishnan,M,sanjay.krishnan@student.nisdtx.org,Absent
 Alex,Tran,M,alex.tran@student.nisdtx.org,Absent
-Austin,Reynolds,M,austin.reynolds@student.nisdtx.org,Absent
+Austin,Reynolds,F,austin.reynolds@student.nisdtx.org,Absent
 El,Perro,M,el.perro@student.nisdtx.org,Absent
 Jane,Doe,F,jane.doe@student.nisdtx.org,Absent
 John,Smith,M,john.smith@student.nisdtx.org,Absent
@@ -13,4 +13,3 @@ Olivia,Lee,F,olivia.lee@student.nisdtx.org,Absent
 Daniel,Garcia,M,daniel.garcia@student.nisdtx.org,Absent
 Sophia,Martinez,F,sophia.martinez@student.nisdtx.org,Absent
 David,Rodriguez,M,david.rodriguez@student.nisdtx.org,Absent
-Harsika,Krishnan,F,harsika.krishnan@student.nisdtx.org,Absent

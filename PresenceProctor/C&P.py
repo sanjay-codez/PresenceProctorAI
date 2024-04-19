@@ -60,6 +60,17 @@ class App(customtkinter.CTk):
         # Welcome Label #
         self.welcomeLabel = customtkinter.CTkLabel(self.homeFrame, text="Welcome, " + username, font=customtkinter.CTkFont(size=60, weight="bold"))
         self.welcomeLabel.grid(row=3, column=8, padx=0, pady=(70, 70))
+        # Date Label #
+        self.dateLabel = customtkinter.CTkLabel(
+            self.homeFrame,
+            text="Today's Date: " + get_current_date(),
+            font=customtkinter.CTkFont(size=40),
+            text_color='white'
+        )
+        self.dateLabel.grid(row=3, column=8, padx=0, pady=(150, 0))
+
+
+
         ### END OF HOME FRAME ###
 
         # Replace logo image with cropped logo image
@@ -376,10 +387,100 @@ class App(customtkinter.CTk):
     def edit_student(self):
         selected = self.tree.selection()
         if selected:
+            # Get the selected item's information
             item = self.tree.item(selected[0])
             values = item['values']
-            # Logic for editing the student
-            print("Edit:", values)  # Replace with your editing logic
+
+            # Create a popup dialog
+            self.edit_window = customtkinter.CTkToplevel(self)
+            self.edit_window.title("Edit Student")
+            self.edit_window.geometry("300x300")
+            self.edit_window.configure(bg="#333333")
+
+            # Define local method for closing the dialog
+            def close_edit_dialog():
+                self.edit_window.destroy()
+
+            # Define local method to save changes
+            def save_changes():
+                # Perform validation for each field
+                first_name = self.firstNameEditEntry.get().strip()
+                last_name = self.lastNameEditEntry.get().strip()
+                email = self.emailEditEntry.get().strip()
+                gender = self.genderEditVar.get()
+
+                if not first_name or len(first_name) < 2 or not first_name[0].isupper():
+                    tkinter.messagebox.showerror("Error", "Please enter a valid first name.")
+                    return
+
+                if not last_name or len(last_name) < 2 or not last_name[0].isupper():
+                    tkinter.messagebox.showerror("Error", "Please enter a valid last name.")
+                    return
+
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                    tkinter.messagebox.showerror("Error", "Please enter a valid email address.")
+                    return
+
+                # Check for duplicate entries in the CSV file
+                with open('student_data.csv', 'r', newline='') as file:
+                    reader = csv.DictReader(file)
+                    for row in reader:
+                        if row['Email'].strip().lower() == email.lower() and row['Email'] != values[3]:
+                            tkinter.messagebox.showerror("Error", "This email is already used by another student.")
+                            return
+
+                # Update the CSV file
+                new_data = []
+                with open('student_data.csv', 'r', newline='') as file:
+                    reader = csv.DictReader(file)
+                    for row in reader:
+                        if row['Email'] == values[3]:
+                            row['First Name'] = first_name
+                            row['Last Name'] = last_name
+                            row['Gender'] = gender
+                            row['Email'] = email
+                        new_data.append(row)
+
+                with open('student_data.csv', 'w', newline='') as file:
+                    writer = csv.DictWriter(file, fieldnames=['First Name', 'Last Name', 'Gender', 'Email', 'Presence'])
+                    writer.writeheader()
+                    writer.writerows(new_data)
+
+                # Close the edit window
+                close_edit_dialog()
+
+                # Reload data in the treeview
+                self.load_data()
+
+            # Set up the entry fields and radio buttons
+            self.firstNameEditEntry = customtkinter.CTkEntry(self.edit_window, placeholder_text="First Name")
+            self.firstNameEditEntry.insert(0, values[0])
+            self.firstNameEditEntry.pack(pady=10)
+
+            self.lastNameEditEntry = customtkinter.CTkEntry(self.edit_window, placeholder_text="Last Name")
+            self.lastNameEditEntry.insert(0, values[1])
+            self.lastNameEditEntry.pack(pady=10)
+
+            self.emailEditEntry = customtkinter.CTkEntry(self.edit_window, placeholder_text="Email")
+            self.emailEditEntry.insert(0, values[3])
+            self.emailEditEntry.pack(pady=10)
+
+            self.genderEditVar = tkinter.StringVar(value=values[2])
+            self.maleEditRadioButton = customtkinter.CTkRadioButton(self.edit_window, text="Male",
+                                                                    variable=self.genderEditVar, value="M")
+            self.maleEditRadioButton.pack(pady=2)
+            self.femaleEditRadioButton = customtkinter.CTkRadioButton(self.edit_window, text="Female",
+                                                                      variable=self.genderEditVar, value="F")
+            self.femaleEditRadioButton.pack(pady=2)
+
+            # Save Changes Button
+            self.saveChangesButton = customtkinter.CTkButton(self.edit_window, text="Save Changes",
+                                                             command=save_changes)
+            self.saveChangesButton.pack(pady=20)
+
+            # Cancel Button
+            self.cancelButton = customtkinter.CTkButton(self.edit_window, text="Cancel", command=close_edit_dialog)
+            self.cancelButton.pack(pady=20)
         else:
             tkinter.messagebox.showinfo("Edit", "Please select a student to edit.")
 
@@ -388,12 +489,23 @@ class App(customtkinter.CTk):
         if selected:
             item = self.tree.item(selected[0])
             values = item['values']
-            # Logic for deleting the student
-            print("Delete:", values)  # Replace with your deletion logic
+            # Confirm deletion
             response = tkinter.messagebox.askyesno("Delete", "Are you sure you want to delete this student?")
             if response:
-                # Add your code here to delete the student from the CSV and reload the table
-                pass
+                # Read all data and exclude the selected row
+                with open('student_data.csv', 'r', newline='') as file:
+                    reader = csv.DictReader(file)
+                    rows = [row for row in reader if row['Email'] != values[3]]
+
+                # Write the data back to the CSV, excluding the selected student
+                with open('student_data.csv', 'w', newline='') as file:
+                    writer = csv.DictWriter(file, fieldnames=['First Name', 'Last Name', 'Gender', 'Email', 'Presence'])
+                    writer.writeheader()
+                    writer.writerows(rows)
+
+                # Reload data in the treeview
+                self.load_data()
+                self.error_message.set("Student successfully deleted.")
         else:
             tkinter.messagebox.showinfo("Delete", "Please select a student to delete.")
 
