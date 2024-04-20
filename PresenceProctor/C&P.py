@@ -8,10 +8,13 @@ import re
 import csv
 import requests
 from datetime import datetime
+from tkinter import filedialog
+from shutil import copyfile
+
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standar d), "green", "dark-blue"
-username = "Sir"
+username = "Teacher"
 
 # call the function and returns MM/DD/YYYY
 def get_current_date():
@@ -219,6 +222,11 @@ class App(customtkinter.CTk):
         self.emailEntry = customtkinter.CTkEntry(self.studentSetupSection, placeholder_text="Email")
         self.emailEntry.grid(row=5, column=0, padx=entry_padx, pady=entry_pady, sticky="ew", ipady=entry_ipady)
 
+        # Upload Image Button
+        self.uploadImageButton = customtkinter.CTkButton(self.studentSetupSection, text="Upload Image",
+                                                         command=self.upload_student_image)
+        self.uploadImageButton.grid(row=7, column=0, padx=entry_padx, pady=(entry_pady, 20), sticky="ew")
+
         # Submit Button
         self.submitButton = customtkinter.CTkButton(self.studentSetupSection, text="Submit",
                                                     command=self.submit_student_info)
@@ -260,29 +268,34 @@ class App(customtkinter.CTk):
     def submit_student_info(self):
         # Validation for First and Last Name
         first_name = self.firstNameEntry.get().strip()
+        last_name = self.lastNameEntry.get().strip()
+        email = self.emailEntry.get().strip()
+        gender = self.genderVar.get()
+
+        # First check if an image has been uploaded
+        if not hasattr(self, 'student_image_path'):
+            self.error_message.set("Please upload an image for the student.")
+            return
+
+        # Continue with validation for the rest of the form
         if not first_name or len(first_name) < 2 or not first_name[0].isupper():
-            self.error_message.set("First Name : Invalid First Name\n First Name : Capitalize first letter\n First Name : Minimum length: 2")
+            self.error_message.set(
+                "First Name : Invalid First Name\n First Name : Capitalize first letter\n First Name : Minimum length: 2")
             self.firstNameEntry.delete(0, tkinter.END)  # Clear the entry field
             return
 
-        last_name = self.lastNameEntry.get().strip()
         if not last_name or len(last_name) < 2 or not last_name[0].isupper():
-            self.error_message.set("Last Name : Invalid Last Name\n Last Name : Capitalize first letter\n Last Name : Minimum length: 2")
+            self.error_message.set(
+                "Last Name : Invalid Last Name\n Last Name : Capitalize first letter\n Last Name : Minimum length: 2")
             self.lastNameEntry.delete(0, tkinter.END)  # Clear the entry field
             return
 
-        # Validation for Email using regex
-        email = self.emailEntry.get().strip()
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             self.error_message.set("Invalid email address.\nOr left blank")
             self.emailEntry.delete(0, tkinter.END)  # Clear the entry field
             return
 
-        gender = self.genderVar.get()
-
-        # No errors, clear the error message
-        self.error_message.set("")
-
+        # Check for duplicate entries
         try:
             with open('student_data.csv', 'r', newline='') as file:
                 reader = csv.DictReader(file)
@@ -295,10 +308,8 @@ class App(customtkinter.CTk):
                         self.error_message.set("Duplicate email:\n - This email is already used.")
                         return
         except FileNotFoundError:
-            # If the file doesn't exist yet, no need to check for duplicates
-            pass
+            pass  # If the file doesn't exist yet, no need to check for duplicates
 
-            # Append the new data to the CSV file
         # No duplicate found, append the new data to the CSV file
         try:
             with open('student_data.csv', 'a', newline='') as file:
@@ -308,20 +319,19 @@ class App(customtkinter.CTk):
                     writer.writeheader()
                 writer.writerow({'First Name': first_name, 'Last Name': last_name, 'Gender': gender, 'Email': email,
                                  'Presence': "Absent"})
-                # Show success message
                 self.error_message.set("Student information successfully added.")
         except Exception as e:
-            self.error_message.set("An error occurred while writing to the file.")
+            self.error_message.set(f"An error occurred while writing to the file: {e}")
+            return
+
+        # Clear the stored image path after successful submission
+        del self.student_image_path
 
         # Clear all fields after successful submission or error
         self.firstNameEntry.delete(0, tkinter.END)
         self.lastNameEntry.delete(0, tkinter.END)
         self.emailEntry.delete(0, tkinter.END)
         self.genderVar.set("M")
-
-        # Show success message
-        self.error_message.set("Student information successfully added.")
-
     def create_student_table(self):
         # Treeview
         self.tree = ttk.Treeview(self.setupFrame, columns=('First Name', 'Last Name', 'Gender', 'Email'), height=10,
@@ -492,6 +502,12 @@ class App(customtkinter.CTk):
             # Confirm deletion
             response = tkinter.messagebox.askyesno("Delete", "Are you sure you want to delete this student?")
             if response:
+                # Delete the student image if it exists
+                image_filename = f"{values[0]}_{values[1]}.jpg"
+                image_path = os.path.join(os.getcwd(), "images_data", image_filename)
+                if os.path.isfile(image_path):
+                    os.remove(image_path)
+
                 # Read all data and exclude the selected row
                 with open('student_data.csv', 'r', newline='') as file:
                     reader = csv.DictReader(file)
@@ -509,7 +525,30 @@ class App(customtkinter.CTk):
         else:
             tkinter.messagebox.showinfo("Delete", "Please select a student to delete.")
 
+    def upload_student_image(self):
+        # Open a dialog to select an image file
+        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png")])
+        if file_path:
+            first_name = self.firstNameEntry.get().strip().capitalize()
+            last_name = self.lastNameEntry.get().strip().capitalize()
 
+            if not (first_name and last_name):
+                tkinter.messagebox.showerror("Error", "Please enter the first and last name before uploading an image.")
+                return
+
+            # Rename the image and save it to the images_data directory
+            new_filename = f"{first_name}_{last_name}.jpg"
+            image_directory = os.path.join(os.getcwd(), "images_data")
+            if not os.path.exists(image_directory):
+                os.makedirs(image_directory)
+
+            new_file_path = os.path.join(image_directory, new_filename)
+            copyfile(file_path, new_file_path)
+
+            # Store the path or just the filename depending on your needs
+            self.student_image_path = new_file_path  # or just `new_filename`
+
+            tkinter.messagebox.showinfo("Success", "Image uploaded successfully.")
 
 
 
