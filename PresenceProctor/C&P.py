@@ -11,10 +11,10 @@ from datetime import datetime
 from tkinter import filedialog
 from shutil import copyfile
 
-
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standar d), "green", "dark-blue"
 username = "Teacher"
+
 
 # call the function and returns MM/DD/YYYY
 def get_current_date():
@@ -36,6 +36,15 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
+        # Initialize the fullscreen state
+        self.is_fullscreen = False  # Start with windowed mode
+
+        # Set initial fullscreen mode
+        self.toggle_fullscreen()
+
+        # Bind the escape key to the toggle_fullscreen method
+        self.bind("<F11>", self.toggle_fullscreen)
+
         ### configure window ###
         self.title("PresenceProctor AI")
         self.geometry(f"{1920}x{1080}")
@@ -44,7 +53,6 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
-
 
         ### START OF HOME TAB ###
         # create sidebar frame with widgets
@@ -61,7 +69,8 @@ class App(customtkinter.CTk):
         self.homeFrame.grid_rowconfigure(4, weight=1)
 
         # Welcome Label #
-        self.welcomeLabel = customtkinter.CTkLabel(self.homeFrame, text="Welcome, " + username, font=customtkinter.CTkFont(size=60, weight="bold"))
+        self.welcomeLabel = customtkinter.CTkLabel(self.homeFrame, text="Welcome, " + username,
+                                                   font=customtkinter.CTkFont(size=60, weight="bold"))
         self.welcomeLabel.grid(row=3, column=8, padx=0, pady=(70, 70))
         # Date Label #
         self.dateLabel = customtkinter.CTkLabel(
@@ -72,27 +81,30 @@ class App(customtkinter.CTk):
         )
         self.dateLabel.grid(row=3, column=8, padx=0, pady=(150, 0))
 
-
-
         ### END OF HOME FRAME ###
 
         # Replace logo image with cropped logo image
         self.logo_image = customtkinter.CTkImage(Image.open(current_path + "/test_images/logo1.png"),
-                                               size=(150, 150))
-        self.logo_image = customtkinter.CTkLabel(self.sidebar_frame,text="", image=self.logo_image)
+                                                 size=(150, 150))
+        self.logo_image = customtkinter.CTkLabel(self.sidebar_frame, text="", image=self.logo_image)
         self.logo_image.grid(row=0, column=0)
 
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="PresenceProctor", font=customtkinter.CTkFont(size=20, weight="bold"))
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="PresenceProctor",
+                                                 font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=2, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame,text="Home",corner_radius=0, command=self.home_button_event)
+        self.sidebar_button_1 = customtkinter.CTkButton(self.sidebar_frame, text="Home", corner_radius=0,
+                                                        command=self.home_button_event)
         self.sidebar_button_1.grid(row=4, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame,text="Attendance", command=self.attendance_button_event)
+        self.sidebar_button_2 = customtkinter.CTkButton(self.sidebar_frame, text="Attendance",
+                                                        command=self.attendance_button_event)
         self.sidebar_button_2.grid(row=5, column=0, padx=20, pady=10)
-        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame,text="Setup", command=self.setup_button_event)
+        self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, text="Setup",
+                                                        command=self.setup_button_event)
         self.sidebar_button_3.grid(row=6, column=0, padx=20, pady=10)
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=9, column=0, padx=20, pady=(10, 0))
-        self.appearance_mode_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame, values=["Light", "Dark", "System"],
+        self.appearance_mode_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame,
+                                                                      values=["Light", "Dark", "System"],
                                                                       command=self.change_appearance_mode_event)
         self.appearance_mode_optionmenu.grid(row=9, column=0, padx=20, pady=(10, 10))
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
@@ -102,8 +114,9 @@ class App(customtkinter.CTk):
         self.scaling_optionmenu.grid(row=11, column=0, padx=20, pady=(10, 20))
         # Name label #
         self.label_frame = customtkinter.CTkFrame(self, width=150, corner_radius=0)
-        self.label_frame.grid(row=0, column=1, sticky = "n")
-        self.main_label = customtkinter.CTkLabel(self.label_frame, text="PresenceProctor Dashboard", font=customtkinter.CTkFont(size=20, weight="bold"))
+        self.label_frame.grid(row=0, column=1, sticky="n")
+        self.main_label = customtkinter.CTkLabel(self.label_frame, text="PresenceProctor Dashboard",
+                                                 font=customtkinter.CTkFont(size=20, weight="bold"))
         self.main_label.grid(row=0, column=0, padx=10, pady=(10, 15))
 
         # Setting Default Values #
@@ -159,7 +172,6 @@ class App(customtkinter.CTk):
         self.setupFrame.grid_rowconfigure(3, weight=2)
         # Adjust the column configuration for a centered look with a slight offset to the left
 
-
         # Place the label at the top of the setup frame, centered
         self.setupLabel = customtkinter.CTkLabel(self.setupFrame, text="Setup Students Page",
                                                  font=customtkinter.CTkFont(size=60, weight="bold"))
@@ -171,8 +183,6 @@ class App(customtkinter.CTk):
                                                       font=customtkinter.CTkFont(size=30), fg_color=None,
                                                       text_color='white')
         self.addStudentLabel.grid(row=1, column=0, sticky="s")
-
-
 
         # Student Setup Section, using the column 1 with controlled width
         self.studentSetupSection = customtkinter.CTkFrame(self.setupFrame, corner_radius=10)
@@ -251,29 +261,17 @@ class App(customtkinter.CTk):
         self.setupFrame.grid_forget()
         self.homeFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
 
-    def attendance_button_event(self):
-        self.homeFrame.grid_forget()
-        self.setupFrame.grid_forget()
-
-        # Make the attendance frame visible
-        self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
-
-        # Configure the attendance frame
-        self.attendanceFrame.grid_columnconfigure((0, 2), weight=1)
-        self.attendanceFrame.grid_columnconfigure(1, weight=2)  # This column will contain the tables
-
-        # Set up the reset attendance section
-        self.setup_reset_attendance_section()
-
-        # Create the present students table
-        self.setup_present_students_table()
-
-        # Create the absent students table, below the present students table
-        self.setup_absent_students_table()
-
-        # Populate the tables
-        self.load_present_students_data()
-        self.load_absent_students_data()
+    # def attendance_button_event(self):
+    #     # Hide other frames
+    #     self.homeFrame.grid_forget()
+    #     self.setupFrame.grid_forget()
+    #
+    #     # Configure and show the attendance frame
+    #     self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+    #     self.attendanceFrame.grid_columnconfigure(1, weight=1)
+    #
+    #     # Setup sections within the attendance frame
+    #     self.setup_reset_attendance_section()
 
     def setup_button_event(self):
         # Hide the other frames
@@ -351,6 +349,7 @@ class App(customtkinter.CTk):
         self.lastNameEntry.delete(0, tkinter.END)
         self.emailEntry.delete(0, tkinter.END)
         self.genderVar.set("M")
+
     def create_student_table(self):
         # Treeview
         self.tree = ttk.Treeview(self.setupFrame, columns=('First Name', 'Last Name', 'Gender', 'Email'), height=10,
@@ -570,16 +569,11 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showinfo("Success", "Image uploaded successfully.")
 
     def setup_reset_attendance_section(self):
-        # Set the column configuration for the attendance frame
-        self.attendanceFrame.grid_columnconfigure(0, weight=1)
-        self.attendanceFrame.grid_columnconfigure(1, weight=0)
-        self.attendanceFrame.grid_columnconfigure(2, weight=1)
-
-        # Create the reset frame and center it by placing it in the middle column
+        # Create the reset frame and place it on the left side
         self.resetFrame = customtkinter.CTkFrame(self.attendanceFrame, corner_radius=10)
-        self.resetFrame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
+        self.resetFrame.grid(row=1, column=0, padx=100, pady=30, sticky="nw")
 
-        # Set the inner grid of the resetFrame to center the widgets inside it
+        # Configure the inner grid of the resetFrame
         self.resetFrame.grid_columnconfigure(0, weight=1)
         self.resetFrame.grid_rowconfigure(0, weight=1)
         self.resetFrame.grid_rowconfigure(1, weight=1)
@@ -610,6 +604,11 @@ class App(customtkinter.CTk):
                                                    command=self.reset_attendance)
         self.resetButton.grid(row=4, column=0, padx=10, pady=10)
 
+
+
+
+        self.attendanceLabel.grid(row=0, column=0, columnspan=3, sticky="new", padx=20, pady=(10, 20))
+
     def reset_attendance(self):
         username = self.usernameEntry.get()
         password = self.passwordEntry.get()
@@ -639,63 +638,72 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showerror("Access Denied", "The username or password is incorrect.")
 
     def attendance_button_event(self):
+        # Clear any previous widgets in the frame
+        for widget in self.attendanceFrame.winfo_children():
+            widget.destroy()
+
+        # Make the attendance frame visible and configure grid
         self.homeFrame.grid_forget()
         self.setupFrame.grid_forget()
         self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
-        self.setup_reset_attendance_section()  # Set up the reset attendance section
 
-    def attendance_button_event(self):
-        self.homeFrame.grid_forget()
-        self.setupFrame.grid_forget()
+        # Configure columns and rows
+        self.attendanceFrame.grid_columnconfigure(0, weight=1)
+        self.attendanceFrame.grid_columnconfigure(1, weight=0)
+        self.attendanceFrame.grid_columnconfigure(2, weight=1)
+        self.attendanceFrame.grid_rowconfigure(0, weight=0)
+        self.attendanceFrame.grid_rowconfigure(1, weight=1)
 
-        # Make the attendance frame visible
-        self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+        # Title Label
+        self.attendanceLabel = customtkinter.CTkLabel(
+            self.attendanceFrame,
+            text="Take Attendance",
+            font=customtkinter.CTkFont(size=60, weight="bold"),
+            text_color='white'
+        )
+        self.attendanceLabel.grid(row=0, column=1, sticky="nsew", padx=20, pady=(10, 20))
 
-        # Configure the attendance frame
-        self.attendanceFrame.grid_columnconfigure((0, 2), weight=1)
-        self.attendanceFrame.grid_columnconfigure(1, weight=2)  # This column will contain the table
+        # Attendance Section Frame
+        self.takeAttendanceSection = customtkinter.CTkFrame(self.attendanceFrame, corner_radius=10)
+        self.takeAttendanceSection.grid(row=1, column=0, padx=20, pady=20, sticky="ne")
+        # Instruction Label
+        self.instructionLabel = customtkinter.CTkLabel(
+            self.takeAttendanceSection,
+            text="Enter first and last name, then press the button and keep your face clear in front of the webcam to detect and mark you present.",
+            font=customtkinter.CTkFont(size=17),  # Adjusted for readability
+            fg_color=None,
+            text_color='white',
+            wraplength=500  # Adjusted to wrap the text
+        )
+        self.instructionLabel.grid(row=1, column=0, sticky="ew", padx=20, pady=(25, 50))
 
-        # Set up the reset attendance section
+        # First Name Entry
+        self.firstNameEntry = customtkinter.CTkEntry(self.takeAttendanceSection, placeholder_text="First Name")
+        self.firstNameEntry.grid(row=2, column=0, sticky="ew", padx=20, pady=(0, 10))
+
+        # Last Name Entry
+        self.lastNameEntry = customtkinter.CTkEntry(self.takeAttendanceSection, placeholder_text="Last Name")
+        self.lastNameEntry.grid(row=3, column=0, sticky="ew", padx=20, pady=(0, 10))
+
+        # Take Attendance Button
+        self.takeAttendanceButton = customtkinter.CTkButton(
+            self.takeAttendanceSection,
+            text="Take Attendance",
+            command=self.take_attendance  # Assuming there's a method defined to handle the attendance taking process
+        )
+        self.takeAttendanceButton.grid(row=4, column=0, sticky="ew", padx=20, pady=(0, 20))
+
+        # Reset Section
         self.setup_reset_attendance_section()
 
-        # Create the present students table
-        self.present_students_frame = customtkinter.CTkFrame(self.attendanceFrame, corner_radius=10)
-        self.present_students_frame.grid(row=1, column=1, padx=20, pady=20, sticky="nsew")
+    def take_attendance(self):
+        print("Hello World")
 
-        # Configure the present students frame grid
-        self.present_students_frame.grid_columnconfigure(0, weight=1)
-        self.present_students_frame.grid_rowconfigure(0, weight=1)
+    def toggle_fullscreen(self, event=None):
+        # This method toggles the fullscreen state
+        self.is_fullscreen = not self.is_fullscreen  # Just toggling the boolean
+        self.attributes("-fullscreen", self.is_fullscreen)
 
-        # Add the table with Treeview
-        self.present_students_tree = ttk.Treeview(self.present_students_frame, columns=('First Name', 'Last Name'),
-                                                  show='headings', height=10, selectmode='none', style="Treeview")
-        self.present_students_tree.heading('First Name', text='First Name')
-        self.present_students_tree.heading('Last Name', text='Last Name')
-        self.present_students_tree.column('First Name', width=150)
-        self.present_students_tree.column('Last Name', width=150)
-        self.present_students_tree.grid(row=0, column=0, sticky='nsew')
-
-        # Add scrollbar for the table
-        self.present_students_scrollbar = ttk.Scrollbar(self.present_students_frame, orient='vertical',
-                                                        command=self.present_students_tree.yview)
-        self.present_students_tree.configure(yscrollcommand=self.present_students_scrollbar.set)
-        self.present_students_scrollbar.grid(row=0, column=1, sticky='ns')
-
-        # Populate the table
-        self.load_present_students_data()
-
-    def load_present_students_data(self):
-        # Load data from CSV and insert into the present students table
-        # This should be filtered for students who are present if your data supports this
-        try:
-            with open('student_data.csv', 'r', newline='') as file:
-                self.present_students_tree.delete(*self.present_students_tree.get_children())  # Clear current items
-                reader = csv.DictReader(file)
-                for row in reader:
-                    if row['Presence'] == 'Present':  # Assuming the Presence field indicates present/absent status
-                        self.present_students_tree.insert('', 'end', values=(row['First Name'], row['Last Name']))
-        except FileNotFoundError:
-            pass  # File doesn't exist yet, nothing to load
 
 if __name__ == "__main__":
     app = App()
