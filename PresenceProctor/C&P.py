@@ -254,7 +254,26 @@ class App(customtkinter.CTk):
     def attendance_button_event(self):
         self.homeFrame.grid_forget()
         self.setupFrame.grid_forget()
+
+        # Make the attendance frame visible
         self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+
+        # Configure the attendance frame
+        self.attendanceFrame.grid_columnconfigure((0, 2), weight=1)
+        self.attendanceFrame.grid_columnconfigure(1, weight=2)  # This column will contain the tables
+
+        # Set up the reset attendance section
+        self.setup_reset_attendance_section()
+
+        # Create the present students table
+        self.setup_present_students_table()
+
+        # Create the absent students table, below the present students table
+        self.setup_absent_students_table()
+
+        # Populate the tables
+        self.load_present_students_data()
+        self.load_absent_students_data()
 
     def setup_button_event(self):
         # Hide the other frames
@@ -550,7 +569,133 @@ class App(customtkinter.CTk):
 
             tkinter.messagebox.showinfo("Success", "Image uploaded successfully.")
 
+    def setup_reset_attendance_section(self):
+        # Set the column configuration for the attendance frame
+        self.attendanceFrame.grid_columnconfigure(0, weight=1)
+        self.attendanceFrame.grid_columnconfigure(1, weight=0)
+        self.attendanceFrame.grid_columnconfigure(2, weight=1)
 
+        # Create the reset frame and center it by placing it in the middle column
+        self.resetFrame = customtkinter.CTkFrame(self.attendanceFrame, corner_radius=10)
+        self.resetFrame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
+
+        # Set the inner grid of the resetFrame to center the widgets inside it
+        self.resetFrame.grid_columnconfigure(0, weight=1)
+        self.resetFrame.grid_rowconfigure(0, weight=1)
+        self.resetFrame.grid_rowconfigure(1, weight=1)
+        self.resetFrame.grid_rowconfigure(2, weight=1)
+        self.resetFrame.grid_rowconfigure(3, weight=1)
+        self.resetFrame.grid_rowconfigure(4, weight=1)
+
+        # Add subtitle label
+        self.resetSubtitleLabel = customtkinter.CTkLabel(self.resetFrame, text="Reset Today's Attendance",
+                                                         font=customtkinter.CTkFont(size=16))
+        self.resetSubtitleLabel.grid(row=0, column=0, padx=10, pady=10)
+
+        # Add 'Teacher control only' label
+        self.teacherControlLabel = customtkinter.CTkLabel(self.resetFrame, text="Teacher Control Only",
+                                                          font=customtkinter.CTkFont(size=12))
+        self.teacherControlLabel.grid(row=1, column=0, padx=10)
+
+        # Add entry for username
+        self.usernameEntry = customtkinter.CTkEntry(self.resetFrame, placeholder_text="Username")
+        self.usernameEntry.grid(row=2, column=0, padx=50, pady=10)  # Changed sticky from "ew" to default
+
+        # Add entry for password
+        self.passwordEntry = customtkinter.CTkEntry(self.resetFrame, placeholder_text="Password", show="*")
+        self.passwordEntry.grid(row=3, column=0, padx=50, pady=10)  # Changed sticky from "ew" to default
+
+        # Add reset button
+        self.resetButton = customtkinter.CTkButton(self.resetFrame, text="Reset Attendance",
+                                                   command=self.reset_attendance)
+        self.resetButton.grid(row=4, column=0, padx=10, pady=10)
+
+    def reset_attendance(self):
+        username = self.usernameEntry.get()
+        password = self.passwordEntry.get()
+
+        # Check if the provided username and password are correct
+        if username == 'username' and password == 'password':
+            try:
+                # Read the data from the CSV
+                with open('student_data.csv', 'r', newline='') as file:
+                    reader = csv.DictReader(file)
+                    students = list(reader)
+
+                # Reset the Presence field for all students to 'Absent'
+                for student in students:
+                    student['Presence'] = 'Absent'
+
+                # Write the updated data back to the CSV
+                with open('student_data.csv', 'w', newline='') as file:
+                    writer = csv.DictWriter(file, fieldnames=reader.fieldnames)
+                    writer.writeheader()
+                    writer.writerows(students)
+
+                tkinter.messagebox.showinfo("Reset Attendance", "All attendance has been reset to 'Absent'.")
+            except FileNotFoundError:
+                tkinter.messagebox.showerror("Error", "The student data file does not exist.")
+        else:
+            tkinter.messagebox.showerror("Access Denied", "The username or password is incorrect.")
+
+    def attendance_button_event(self):
+        self.homeFrame.grid_forget()
+        self.setupFrame.grid_forget()
+        self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+        self.setup_reset_attendance_section()  # Set up the reset attendance section
+
+    def attendance_button_event(self):
+        self.homeFrame.grid_forget()
+        self.setupFrame.grid_forget()
+
+        # Make the attendance frame visible
+        self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+
+        # Configure the attendance frame
+        self.attendanceFrame.grid_columnconfigure((0, 2), weight=1)
+        self.attendanceFrame.grid_columnconfigure(1, weight=2)  # This column will contain the table
+
+        # Set up the reset attendance section
+        self.setup_reset_attendance_section()
+
+        # Create the present students table
+        self.present_students_frame = customtkinter.CTkFrame(self.attendanceFrame, corner_radius=10)
+        self.present_students_frame.grid(row=1, column=1, padx=20, pady=20, sticky="nsew")
+
+        # Configure the present students frame grid
+        self.present_students_frame.grid_columnconfigure(0, weight=1)
+        self.present_students_frame.grid_rowconfigure(0, weight=1)
+
+        # Add the table with Treeview
+        self.present_students_tree = ttk.Treeview(self.present_students_frame, columns=('First Name', 'Last Name'),
+                                                  show='headings', height=10, selectmode='none', style="Treeview")
+        self.present_students_tree.heading('First Name', text='First Name')
+        self.present_students_tree.heading('Last Name', text='Last Name')
+        self.present_students_tree.column('First Name', width=150)
+        self.present_students_tree.column('Last Name', width=150)
+        self.present_students_tree.grid(row=0, column=0, sticky='nsew')
+
+        # Add scrollbar for the table
+        self.present_students_scrollbar = ttk.Scrollbar(self.present_students_frame, orient='vertical',
+                                                        command=self.present_students_tree.yview)
+        self.present_students_tree.configure(yscrollcommand=self.present_students_scrollbar.set)
+        self.present_students_scrollbar.grid(row=0, column=1, sticky='ns')
+
+        # Populate the table
+        self.load_present_students_data()
+
+    def load_present_students_data(self):
+        # Load data from CSV and insert into the present students table
+        # This should be filtered for students who are present if your data supports this
+        try:
+            with open('student_data.csv', 'r', newline='') as file:
+                self.present_students_tree.delete(*self.present_students_tree.get_children())  # Clear current items
+                reader = csv.DictReader(file)
+                for row in reader:
+                    if row['Presence'] == 'Present':  # Assuming the Presence field indicates present/absent status
+                        self.present_students_tree.insert('', 'end', values=(row['First Name'], row['Last Name']))
+        except FileNotFoundError:
+            pass  # File doesn't exist yet, nothing to load
 
 if __name__ == "__main__":
     app = App()
