@@ -155,6 +155,7 @@ class App(customtkinter.CTk):
                                                       font=customtkinter.CTkFont(size=60, weight="bold"))
         self.attendanceLabel.grid(row=0, column=0, padx=20, pady=(20, 0), sticky="n")
 
+
         # Initially, the attendance frame should not be visible, so we use grid_forget
         self.attendanceFrame.grid_forget()
         ### END OF ATTENDANCE FRAME ###
@@ -261,17 +262,7 @@ class App(customtkinter.CTk):
         self.setupFrame.grid_forget()
         self.homeFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
 
-    # def attendance_button_event(self):
-    #     # Hide other frames
-    #     self.homeFrame.grid_forget()
-    #     self.setupFrame.grid_forget()
-    #
-    #     # Configure and show the attendance frame
-    #     self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
-    #     self.attendanceFrame.grid_columnconfigure(1, weight=1)
-    #
-    #     # Setup sections within the attendance frame
-    #     self.setup_reset_attendance_section()
+
 
     def setup_button_event(self):
         # Hide the other frames
@@ -692,7 +683,8 @@ class App(customtkinter.CTk):
             command=self.take_attendance  # Assuming there's a method defined to handle the attendance taking process
         )
         self.takeAttendanceButton.grid(row=4, column=0, sticky="ew", padx=20, pady=(0, 20))
-
+        # Call to create the attendance table
+        self.create_attendance_table()
         # Reset Section
         self.setup_reset_attendance_section()
 
@@ -704,7 +696,52 @@ class App(customtkinter.CTk):
         self.is_fullscreen = not self.is_fullscreen  # Just toggling the boolean
         self.attributes("-fullscreen", self.is_fullscreen)
 
+    def create_attendance_table(self):
+        # Define Treeview for the attendance list
+        self.attendance_tree = ttk.Treeview(self.attendanceFrame, columns=("First Name", "Last Name", "Presence"),
+                                            height=10, show='headings')
+        self.attendance_tree.heading("First Name", text="First Name")
+        self.attendance_tree.heading("Last Name", text="Last Name")
+        self.attendance_tree.heading("Presence", text="Presence")
+        self.attendance_tree['selectmode'] = 'none'  # Disables selecting rows
 
+        # Define columns width and alignment
+        self.attendance_tree.column("First Name", anchor="center", width=100)
+        self.attendance_tree.column("Last Name", anchor="center", width=100)
+        self.attendance_tree.column("Presence", anchor="center", width=100)
+
+        # Scrollbar for the Treeview
+        scrollbar = ttk.Scrollbar(self.attendanceFrame, orient="vertical", command=self.attendance_tree.yview)
+        self.attendance_tree.configure(yscrollcommand=scrollbar.set)
+
+        # Position the Treeview and scrollbar
+        self.attendance_tree.grid(row=2, column=0, sticky="nsew", padx=(20, 0))
+        scrollbar.grid(row=2, column=1, sticky='nsew')
+
+        # Load the attendance data
+        self.load_attendance_data()
+
+        # Assuming your table was originally at row=2, you want to move it to row=1
+        self.attendance_tree.grid(row=1, column=0, sticky="nsew", padx=(100, 0), pady=(400, 0))  # Add some top padding
+        scrollbar.grid(row=1, column=1, sticky='nsew', pady=(400, 0))  # Match the padding for the scrollbar
+
+        # Make sure to configure the grid weights accordingly
+        self.attendanceFrame.grid_rowconfigure(1, weight=0)  # This row will have the table, no stretching
+        self.attendanceFrame.grid_rowconfigure(2, weight=1)  # The next row should stretch to fill space
+
+    def load_attendance_data(self):
+        # Load the attendance data from the CSV and sort it
+        try:
+            with open('student_data.csv', 'r', newline='') as file:
+                reader = csv.DictReader(file)
+                # Sorting data by First Name alphabetically
+                sorted_list = sorted(reader, key=lambda r: r['First Name'])
+                for row in sorted_list:
+                    presence = row.get('Presence', 'Absent')  # Assume absent if no presence info
+                    self.attendance_tree.insert('', 'end', values=(row['First Name'], row['Last Name'], presence))
+        except FileNotFoundError:
+            # Handle the error or create a new file if necessary
+            pass
 if __name__ == "__main__":
     app = App()
     app.mainloop()
