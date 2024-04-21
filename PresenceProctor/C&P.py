@@ -2,13 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox
 import customtkinter
-from PIL import Image
+from PIL import Image, ImageTk
 import os
 import re
 import csv
 import requests
 from datetime import datetime
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 from shutil import copyfile
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
@@ -511,26 +511,35 @@ class App(customtkinter.CTk):
             # Confirm deletion
             response = tkinter.messagebox.askyesno("Delete", "Are you sure you want to delete this student?")
             if response:
-                # Delete the student image if it exists
+                # Formulate the expected image filename based on the student's first and last name
                 image_filename = f"{values[0]}_{values[1]}.jpg"
                 image_path = os.path.join(os.getcwd(), "images_data", image_filename)
-                if os.path.isfile(image_path):
-                    os.remove(image_path)
+                try:
+                    # Attempt to delete the image file
+                    if os.path.exists(image_path):
+                        os.remove(image_path)
+                    else:
+                        print("Image file not found. It may have already been deleted.")
+                except Exception as e:
+                    print(f"An error occurred while deleting the image file: {e}")
 
-                # Read all data and exclude the selected row
+                # Read all data excluding the selected row
+                new_data = []
                 with open('student_data.csv', 'r', newline='') as file:
                     reader = csv.DictReader(file)
-                    rows = [row for row in reader if row['Email'] != values[3]]
+                    for row in reader:
+                        if row['Email'] != values[3]:
+                            new_data.append(row)
 
                 # Write the data back to the CSV, excluding the selected student
                 with open('student_data.csv', 'w', newline='') as file:
                     writer = csv.DictWriter(file, fieldnames=['First Name', 'Last Name', 'Gender', 'Email', 'Presence'])
                     writer.writeheader()
-                    writer.writerows(rows)
+                    writer.writerows(new_data)
 
                 # Reload data in the treeview
                 self.load_data()
-                self.error_message.set("Student successfully deleted.")
+                tkinter.messagebox.showinfo("Success", "Student and their image have been successfully deleted.")
         else:
             tkinter.messagebox.showinfo("Delete", "Please select a student to delete.")
 
