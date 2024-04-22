@@ -1,3 +1,5 @@
+
+#import necessary stuff
 import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox
@@ -10,11 +12,19 @@ import requests
 from datetime import datetime
 from tkinter import filedialog, messagebox
 from shutil import copyfile
+from face_recognition import detect_face_in_video
+from win32com.client import Dispatch
+
+
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standar d), "green", "dark-blue"
 username = "Teacher"
 
+# speaking audio function cool
+def speak(str1):
+    speak=Dispatch(("SAPI.SpVoice"))
+    speak.Speak(str1)
 
 # call the function and returns MM/DD/YYYY
 def get_current_date():
@@ -698,7 +708,48 @@ class App(customtkinter.CTk):
         self.setup_reset_attendance_section()
 
     def take_attendance(self):
-        print("Hello World")
+        first_name = self.firstNameEntry.get().strip().capitalize()
+        last_name = self.lastNameEntry.get().strip().capitalize()
+
+        if not first_name or not last_name:
+            customtkinter.CTkMessageBox.show_error("Error", "Please enter both first and last names.")
+            return
+
+        # Locate the student in the CSV file
+        found = False
+        student_image_path = None
+        with open('student_data.csv', 'r', newline='') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if row['First Name'].capitalize() == first_name and row['Last Name'].capitalize() == last_name:
+                    found = True
+                    student_image_path = os.path.join(os.getcwd(), "images_data", f"{first_name}_{last_name}.jpg")
+                    break
+
+        if not found:
+            customtkinter.CTkMessageBox.show_error("Error", "Student not found in the database.")
+            return
+
+        # Face detection
+        if student_image_path and detect_face_in_video(student_image_path):
+            # Update CSV to mark student as present
+            new_data = []
+            with open('student_data.csv', 'r', newline='') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    if row['First Name'] == first_name and row['Last Name'] == last_name:
+                        row['Presence'] = 'Present'
+                    new_data.append(row)
+
+            with open('student_data.csv', 'w', newline='') as file:
+                fieldnames = ['First Name', 'Last Name', 'Gender', 'Email', 'Presence']
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(new_data)
+
+            customtkinter.CTkMessageBox.show_info("Success", f"Student found, welcome {first_name} {last_name}!")
+        else:
+            customtkinter.CTkMessageBox.show_error("Error", "Student not detected. Please try again.")
 
     def toggle_fullscreen(self, event=None):
         # This method toggles the fullscreen state

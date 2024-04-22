@@ -6,6 +6,9 @@ import os
 import sys
 import time
 
+# Load the cascade for face detection
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
 def detect_face_in_video(file_path):
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
@@ -36,9 +39,21 @@ def detect_face_in_video(file_path):
     while True:
         ret, frame = cap.read()
         if ret:
+            # Convert frame to grayscale for face detection
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # Detect faces in the frame
+            faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+
+            # Draw rectangles around each face
+            for (x, y, w, h) in faces:
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
             if counter % 30 == 0:
                 threading.Thread(target=check_face, args=(frame.copy(), reference_img_path)).start()
             counter += 1
+
+            # Display the frame
+            cv2.imshow("Video", frame)
 
             with lock:
                 if face_match:
