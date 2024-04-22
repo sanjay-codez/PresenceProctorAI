@@ -56,7 +56,7 @@ class App(customtkinter.CTk):
         self.bind("<F11>", self.toggle_fullscreen)
 
         ### configure window ###
-        self.title("PresenceProctor AI")
+        self.title("PresenceProctor")
         self.geometry(f"{1920}x{1080}")
 
         # configure grid layout (4x4)
@@ -350,6 +350,7 @@ class App(customtkinter.CTk):
         self.lastNameEntry.delete(0, tkinter.END)
         self.emailEntry.delete(0, tkinter.END)
         self.genderVar.set("M")
+        self.load_data()
 
     def create_student_table(self):
         # Treeview
@@ -512,6 +513,7 @@ class App(customtkinter.CTk):
             self.cancelButton.pack(pady=20)
         else:
             tkinter.messagebox.showinfo("Edit", "Please select a student to edit.")
+
 
     def delete_student(self):
         selected = self.tree.selection()
@@ -712,7 +714,9 @@ class App(customtkinter.CTk):
         last_name = self.lastNameEntry.get().strip().capitalize()
 
         if not first_name or not last_name:
-            customtkinter.CTkMessageBox.show_error("Error", "Please enter both first and last names.")
+
+            tkinter.messagebox.showinfo("Error", "Please enter both first and last names.")
+
             return
 
         # Locate the student in the CSV file
@@ -727,7 +731,8 @@ class App(customtkinter.CTk):
                     break
 
         if not found:
-            customtkinter.CTkMessageBox.show_error("Error", "Student not found in the database.")
+            # customtkinter.CTkMessageBox.show_error("Error", "Student not found in the database.")
+            tkinter.messagebox.showinfo("Error", "Student not found in the database.")
             return
 
         # Face detection
@@ -747,9 +752,13 @@ class App(customtkinter.CTk):
                 writer.writeheader()
                 writer.writerows(new_data)
 
-            customtkinter.CTkMessageBox.show_info("Success", f"Student found, welcome {first_name} {last_name}!")
+
+            speak(f"Success! Student found, welcome {first_name} {last_name}!")
+            #tkinter.messagebox.showinfo("Success", f"Student found, welcome {first_name} {last_name}!")
+
         else:
-            customtkinter.CTkMessageBox.show_error("Error", "Student not detected. Please try again.")
+            tkinter.messagebox.showinfo("Error", "Student not detected. Please try again.")
+            #customtkinter.CTkMessageBox.show_error("Error", "Student not detected. Please try again.")
 
     def toggle_fullscreen(self, event=None):
         # This method toggles the fullscreen state
