@@ -14,6 +14,9 @@ from tkinter import filedialog, messagebox
 from shutil import copyfile
 from face_recognition import detect_face_in_video
 from win32com.client import Dispatch
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
 
 
 
@@ -90,6 +93,11 @@ class App(customtkinter.CTk):
             text_color='white'
         )
         self.dateLabel.grid(row=3, column=8, padx=0, pady=(150, 0))
+
+        self.graph_frame = customtkinter.CTkFrame(self, width=700, height=600)
+        self.graph_frame.grid(row=0, column=1, padx=20, pady=250)
+
+        self.load_attendance_data_and_draw_graph()
 
         ### END OF HOME FRAME ###
 
@@ -263,6 +271,9 @@ class App(customtkinter.CTk):
     def change_appearance_mode_event(self, new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
+        # if light then black image
+        # else light image
+
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
@@ -271,6 +282,7 @@ class App(customtkinter.CTk):
         self.attendanceFrame.grid_forget()
         self.setupFrame.grid_forget()
         self.homeFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
+        self.load_attendance_data_and_draw_graph()
 
 
 
@@ -811,6 +823,41 @@ class App(customtkinter.CTk):
         except FileNotFoundError:
             # Handle the error or create a new file if necessary
             pass
+
+    def load_attendance_data_and_draw_graph(self):
+        # Load attendance data from CSV
+        try:
+            with open('student_data.csv', 'r', newline='') as file:
+                reader = csv.DictReader(file)
+                attendance_count = {'Present': 0, 'Absent': 0}
+                for row in reader:
+                    presence = row['Presence']
+                    if presence == 'Present':
+                        attendance_count['Present'] += 1
+                    else:
+                        attendance_count['Absent'] += 1
+        except FileNotFoundError:
+            tkinter.messagebox.showerror("Error", "The data file is missing.")
+            return
+
+        # Create the bar graph
+        fig = Figure(figsize=(7, 6), dpi=100)
+        fig.patch.set_facecolor('#333333')
+        ax = fig.add_subplot(111)
+        ax.set_facecolor('#333333')
+        ax.bar(attendance_count.keys(), attendance_count.values(), color=['green', 'red'])
+        ax.set_title("Today's Analysis", color='white')
+        ax.set_xlabel('Status', color='white')
+        ax.set_ylabel('Number of Students', color='white')
+        ax.tick_params(colors='white')
+
+        # Embed the graph in the tkinter window
+        canvas = FigureCanvasTkAgg(fig, master=self.graph_frame)  # A tk.DrawingArea.
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+
+
 if __name__ == "__main__":
     app = App()
     app.mainloop()
