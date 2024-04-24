@@ -825,6 +825,9 @@ class App(customtkinter.CTk):
             pass
 
     def load_attendance_data_and_draw_graph(self):
+        # Clear previous graph
+        self.canvas.get_tk_widget().forget() if hasattr(self, 'canvas') else None
+
         # Load attendance data from CSV
         try:
             with open('student_data.csv', 'r', newline='') as file:
@@ -852,9 +855,9 @@ class App(customtkinter.CTk):
         ax.tick_params(colors='white')
 
         # Embed the graph in the tkinter window
-        canvas = FigureCanvasTkAgg(fig, master=self.graph_frame)  # A tk.DrawingArea.
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        self.canvas = FigureCanvasTkAgg(fig, master=self.graph_frame)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 
 
