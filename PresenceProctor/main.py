@@ -1,20 +1,17 @@
+"""A GUI application for the PresenceProctor login panel."""
+# import necessary modules
 import time
-
-import customtkinter
-import tkinter
-
 import customtkinter
 from PIL import Image
 import os
 import subprocess
 import sys
 
+# dark mode appearance
 customtkinter.set_appearance_mode("dark")
 
 
-#current_directory = os.path.dirname(os.path.abspath(__file__))
-#parent_directory = os.path.dirname(current_directory)
-
+# login app class
 class App(customtkinter.CTk):
     width = 500
     height = 720
@@ -24,7 +21,7 @@ class App(customtkinter.CTk):
 
         self.title("PresenceProctor Login Panel")
         self.geometry(f"{self.width}x{self.height}")
-        self.resizable(False,False)
+        self.resizable(False, False)
 
         # load and create background image
         current_path = os.path.dirname(os.path.realpath(__file__))
@@ -36,7 +33,7 @@ class App(customtkinter.CTk):
         # create login frame
         self.login_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.login_frame.grid(row=0, column=0, sticky="ns")
-        self.login_label = customtkinter.CTkLabel(self.login_frame, text="PresenseProctor AI\nLogin Page",
+        self.login_label = customtkinter.CTkLabel(self.login_frame, text="PresenceProctor AI\nLogin Page",
                                                   font=customtkinter.CTkFont(size=20, weight="bold"))
         self.login_label.grid(row=0, column=0, padx=30, pady=(150, 15))
 
@@ -59,13 +56,34 @@ class App(customtkinter.CTk):
         # create main frame
         self.main_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.main_frame.grid_columnconfigure(0, weight=100)
-        self.main_label = customtkinter.CTkLabel(self.main_frame, text="PresenseProctor AI\nDashboard",
+        self.main_label = customtkinter.CTkLabel(self.main_frame, text="PresenceProctor AI\nDashboard",
                                                  font=customtkinter.CTkFont(size=20, weight="bold"))
         self.main_label.grid(row=0, column=0, padx=0, pady=(30, 15))
         self.back_button = customtkinter.CTkButton(self.main_frame, text="Back", command=self.back_event, width=200)
         self.back_button.grid(row=0, column=0, padx=600, pady=(15, 15))
 
     def login_event(self):
+        """
+            Logs in the user if the entered username and password are correct,
+            otherwise, displays an error message.
+
+            If the entered username and password match the predefined values
+            ("username" and "password" respectively), the login frame is removed
+            and a separate Python script (C&P.py) is executed. After execution, the
+            current window is withdrawn.
+
+            If the username or password is incorrect, an error message is displayed
+            and the login frame remains visible.
+
+            This method assumes the existence of:
+            - self.username_entry: Entry widget for username input.
+            - self.password_entry: Entry widget for password input.
+            - self.SignInLabel: Label widget for displaying messages.
+            - self.login_frame: Frame widget containing login elements.
+
+            Returns:
+            None
+        """
         if self.username_entry.get() == "username" and self.password_entry.get() == "password":
             self.SignInLabel.configure(text="")
             self.username_entry.delete(first_index=0, last_index=10000)
@@ -74,7 +92,8 @@ class App(customtkinter.CTk):
 
             # Separate the Python executable path and the script file path as separate arguments
             python_exe_path = sys.executable
-            script_file_path = os.path.dirname(os.path.abspath(__file__)) + "\C&P.py"
+            script_file_path = os.path.dirname(os.path.abspath(__file__))
+            script_file_path += "/C&P.py"
 
             # Execute the command with both paths as separate arguments
             subprocess.Popen([python_exe_path, script_file_path])
@@ -86,9 +105,22 @@ class App(customtkinter.CTk):
             self.username_entry.delete(first_index=0, last_index=10000)
             self.password_entry.delete(first_index=0, last_index=10000)
 
-
-
     def back_event(self):
+        """
+            Removes the main frame and shows the login frame.
+
+            This method hides the main frame from view and displays the login frame
+            by using the grid_forget() method to remove the main frame from the grid
+            and grid() method to place the login frame at row 0, column 0, with sticky
+            attribute set to "ns".
+
+            Assumes the existence of:
+            - self.main_frame: Frame widget containing main elements.
+            - self.login_frame: Frame widget containing login elements.
+
+            Returns:
+            None
+        """
         self.main_frame.grid_forget()  # remove main frame
         self.login_frame.grid(row=0, column=0, sticky="ns")  # show login frame
 

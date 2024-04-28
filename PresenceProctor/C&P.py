@@ -1,5 +1,11 @@
+"""
+This module imports the necessary libraries and sets up the graphical user interface (GUI) for a student attendance
+system using tkinter and customtkinter libraries.
+It provides functions and classes to manage attendance tracking, student setup, and system settings with features
+such as face recognition, speech output, and data management via CSV files.
+"""
 
-#import necessary stuff
+# import necessary modules
 import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox
@@ -16,9 +22,6 @@ from face_recognition import detect_face_in_video
 from win32com.client import Dispatch
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import matplotlib.pyplot as plt
-
-
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standar d), "green", "dark-blue"
@@ -26,11 +29,30 @@ username = "Teacher"
 
 # speaking audio function cool
 def speak(str1):
-    speak=Dispatch(("SAPI.SpVoice"))
-    speak.Speak(str1)
+    """
+        This function uses the SAPI.SpVoice interface from the Windows Speech API to convert text to speech.
+        It speaks out loud the text passed to it.
+
+        Args:
+        str1 (str): The string of text that will be spoken by the system.
+
+        Example:
+        speak("Hello, world!")  # This will speak "Hello, world!" aloud.
+    """
+    spieak = Dispatch("SAPI.SpVoice")
+    spieak.Speak(str1)
 
 # call the function and returns MM/DD/YYYY
 def get_current_date():
+    """
+        Fetches the current date from the World Time API in UTC timezone and returns it in 'mm/dd/yyyy' format.
+
+        Returns:
+            str: A string representing the current date in 'mm/dd/yyyy' format.
+
+        Raises:
+            Exception: If there is an issue with fetching the data from the World Time API.
+    """
     response = requests.get('http://worldtimeapi.org/api/timezone/Etc/UTC')
     data = response.json()
     datetime_string = data['datetime']
@@ -58,7 +80,7 @@ class App(customtkinter.CTk):
         # Bind the escape key to the toggle_fullscreen method
         self.bind("<F11>", self.toggle_fullscreen)
 
-        ### configure window ###
+        # configure window
         self.title("PresenceProctor")
         self.geometry(f"{1920}x{1080}")
 
@@ -67,7 +89,7 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
-        ### START OF HOME TAB ###
+        # start of home tab
         # create sidebar frame with widgets
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
@@ -99,7 +121,7 @@ class App(customtkinter.CTk):
 
         self.load_attendance_data_and_draw_graph()
 
-        ### END OF HOME FRAME ###
+        # end of home frame
 
         # Replace logo image with cropped logo image
         self.logo_image = customtkinter.CTkImage(Image.open(current_path + "/test_images/logo1.png"),
@@ -140,7 +162,7 @@ class App(customtkinter.CTk):
         # Setting Default Values #
         self.scaling_optionmenu.set("100%")
         self.appearance_mode_optionmenu.set("Dark")
-        ### END OF HOME TAB ###
+        # end of home tab
 
         # Style configuration for the Treeview to make it dark
         style = ttk.Style(self)
@@ -161,7 +183,7 @@ class App(customtkinter.CTk):
         # Change selected color
         style.map('Treeview', background=[('selected', '#0a82cc')])  # Adjust selected color if needed
 
-        ### START OF ATTENDANCE FRAME ###
+        # start of attendance frame
         self.attendanceFrame = customtkinter.CTkFrame(self, width=self.width, corner_radius=0)
         self.attendanceFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
         self.attendanceFrame.grid_columnconfigure(0, weight=1)
@@ -176,9 +198,9 @@ class App(customtkinter.CTk):
 
         # Initially, the attendance frame should not be visible, so we use grid_forget
         self.attendanceFrame.grid_forget()
-        ### END OF ATTENDANCE FRAME ###
+        # end of attendance frame
 
-        ### START OF SETUP FRAME ###
+        # start of step frame
         self.setupFrame = customtkinter.CTkFrame(self, width=self.width, corner_radius=0)
         self.setupFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
 
@@ -262,23 +284,99 @@ class App(customtkinter.CTk):
         self.submitButton.grid(row=6, column=0, padx=entry_padx, pady=(entry_pady, 20))
 
         self.setupFrame.grid_forget()
-        ### END OF SETUP FRAME ###
+        # end of setup frame
 
     def open_input_dialog_event(self):
+        """
+            Opens a custom input dialog using CTkInputDialog, prompts the user to type in a number,
+            and prints the input value.
+
+            This function creates a custom input dialog using the CTkInputDialog class from customtkinter module.
+            The dialog prompts the user to enter a number. Once the user enters the number and confirms,
+            the input value is retrieved using the `get_input()` method of the dialog instance.
+
+            Returns:
+                None
+
+            Raises:
+                No specific exceptions are raised by this function. However, it relies on the behavior
+                of the CTkInputDialog class from customtkinter module. If there are any issues with
+                creating or interacting with the dialog, they might be raised within the customtkinter module.
+
+            Note:
+                The customtkinter module containing CTkInputDialog class must be imported prior to calling this function.
+        """
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
         print("CTkInputDialog:", dialog.get_input())
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
+        """
+            Changes the appearance mode of the application using customtkinter module.
+
+            Args:
+                new_appearance_mode (str): The new appearance mode to set for the application.
+                    It should be one of the supported appearance modes provided by customtkinter module.
+
+            Returns:
+                None
+
+            Raises:
+                No specific exceptions are raised by this function. However, it relies on the behavior
+                of the customtkinter module. If there are any issues with setting the appearance mode,
+                they might be raised within the customtkinter module.
+
+            Note:
+                The customtkinter module containing set_appearance_mode() function must be imported prior to calling this function.
+        """
         customtkinter.set_appearance_mode(new_appearance_mode)
 
-        # if light then black image
-        # else light image
+
 
     def change_scaling_event(self, new_scaling: str):
+        """
+            Changes the scaling factor of widgets in the application using customtkinter module.
+
+            Args:
+                new_scaling (str): The new scaling factor to set for the widgets in the application.
+                    It should be in percentage format (e.g., '100%', '80%', etc.).
+
+            Returns:
+                None
+
+            Raises:
+                ValueError: If the provided scaling factor is not in the correct format or cannot be converted to a float.
+                No specific exceptions are raised by this function. However, it relies on the behavior
+                of the customtkinter module. If there are any issues with setting the widget scaling,
+                they might be raised within the customtkinter module.
+
+            Note:
+                The customtkinter module containing set_widget_scaling() function must be imported prior to calling this function.
+        """
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
 
     def home_button_event(self):
+        """
+            Switches the application to the home frame, hiding other frames if necessary, and loads attendance data.
+
+            This function hides the attendance frame and setup frame by calling the `grid_forget()` method on them,
+            and displays the home frame by placing it in the grid layout. Additionally, it triggers the loading of
+            attendance data and drawing of a graph in the home frame.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of 'attendanceFrame', 'setupFrame', and 'homeFrame' attributes
+                in the class instance representing the frames in the application layout. Additionally, it relies
+                on the 'load_attendance_data_and_draw_graph()' method to load attendance data and draw a graph,
+                which should be defined in the class.
+
+            Example:
+                To use this function, call it when the home button is clicked in your application interface.
+                For example:
+                    my_app.home_button_event()
+        """
         self.attendanceFrame.grid_forget()
         self.setupFrame.grid_forget()
         self.homeFrame.grid(row=0, column=1, rowspan=4, sticky="nsew")
@@ -287,6 +385,27 @@ class App(customtkinter.CTk):
 
 
     def setup_button_event(self):
+        """
+            Switches the application to the setup frame, hiding other frames if necessary, and sets up the student table.
+
+            This function hides the home frame and attendance frame by calling the `grid_forget()` method on them,
+            and displays the setup frame by placing it in the grid layout. Additionally, it triggers the creation
+            of a student table and setup of table buttons (e.g., edit and delete) when the setup tab is shown.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of 'homeFrame', 'attendanceFrame', and 'setupFrame' attributes
+                in the class instance representing the frames in the application layout. Additionally, it relies
+                on the 'create_student_table()' and 'setup_table_buttons()' methods to create the student table
+                and setup table buttons, which should be defined in the class.
+
+            Example:
+                To use this function, call it when the setup button is clicked in your application interface.
+                For example:
+                    my_app.setup_button_event()
+        """
         # Hide the other frames
         self.homeFrame.grid_forget()
         self.attendanceFrame.grid_forget()
@@ -662,6 +781,7 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showerror("Access Denied", "The username or password is incorrect.")
 
     def attendance_button_event(self):
+
         # Clear any previous widgets in the frame
         for widget in self.attendanceFrame.winfo_children():
             widget.destroy()
