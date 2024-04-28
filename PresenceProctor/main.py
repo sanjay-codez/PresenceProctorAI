@@ -62,6 +62,7 @@ class App(customtkinter.CTk):
         self.back_button = customtkinter.CTkButton(self.main_frame, text="Back", command=self.back_event, width=200)
         self.back_button.grid(row=0, column=0, padx=600, pady=(15, 15))
 
+    # start of all the methods for the class
     def login_event(self):
         """
             Logs in the user if the entered username and password are correct,
@@ -69,7 +70,7 @@ class App(customtkinter.CTk):
 
             If the entered username and password match the predefined values
             ("username" and "password" respectively), the login frame is removed
-            and a separate Python script (C&P.py) is executed. After execution, the
+            and a separate Python script (dashboard.py) is executed. After execution, the
             current window is withdrawn.
 
             If the username or password is incorrect, an error message is displayed
@@ -93,7 +94,7 @@ class App(customtkinter.CTk):
             # Separate the Python executable path and the script file path as separate arguments
             python_exe_path = sys.executable
             script_file_path = os.path.dirname(os.path.abspath(__file__))
-            script_file_path += "/C&P.py"
+            script_file_path += "/dashboard.py"
 
             # Execute the command with both paths as separate arguments
             subprocess.Popen([python_exe_path, script_file_path])

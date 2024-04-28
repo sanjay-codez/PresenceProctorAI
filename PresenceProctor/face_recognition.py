@@ -10,6 +10,27 @@ import time
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 def detect_face_in_video(file_path):
+    """
+        Detects a face in a live video stream and compares it with a reference image.
+
+        This function captures live video from the default webcam (index 0) and continuously checks for the presence
+        of a face. It draws rectangles around detected faces in the video stream. It compares the detected face with
+        a reference image provided as the `file_path` parameter using the DeepFace library. If a match is found within
+        10 seconds, it returns True; otherwise, it returns False.
+
+        Args:
+            file_path (str): The file path of the reference image.
+
+        Returns:
+            bool: True if a matching face is detected within 10 seconds, False otherwise.
+
+        Note:
+            This function requires the OpenCV and DeepFace libraries.
+
+        Example:
+            To use this function, provide the file path of the reference image. For example:
+                detect_face_in_video('path_to_reference_image.jpg')
+    """
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
@@ -22,6 +43,29 @@ def detect_face_in_video(file_path):
     last_match_time = time.time()  # Initialize the last match time
 
     def check_face(frame, reference_img_path):
+        """
+            Checks if a face in a frame matches a reference image.
+
+            This function compares a face in the provided frame with a reference image using the DeepFace library.
+            It sets the `face_match` flag to True if the face in the frame matches the reference image, and updates
+            the `last_match_time`. If no match is found, it sets `face_match` to False.
+
+            Args:
+                frame: The frame containing the face to be checked.
+                reference_img_path (str): The file path of the reference image.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of a `face_match` flag and a `last_match_time` variable.
+                It also relies on the DeepFace library for face verification.
+
+            Example:
+                This function is typically called within a video processing loop to check if a detected face matches
+                a reference image. For example:
+                    check_face(frame, 'path_to_reference_image.jpg')
+        """
         nonlocal face_match
         nonlocal last_match_time
         try:
@@ -74,64 +118,3 @@ def detect_face_in_video(file_path):
     cv2.destroyAllWindows()
     return False  # Ensure function returns False if exited early
 
-
-
-# import threading
-# import cv2
-# from deepface import DeepFace
-# import os
-# import sys
-# import time
-#
-# cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-#
-# counter = 0
-# face_match = False
-# reference_img = cv2.imread(os.path.join("images_data", "Sanjay.jpg"))
-#
-# lock = threading.Lock()
-# last_match_time = time.time()  # Initialize the last match time
-#
-# def check_face(frame):
-#     global face_match
-#     global last_match_time
-#     try:
-#         result = DeepFace.verify(img1_path=frame, img2_path=reference_img, enforce_detection=True)
-#         with lock:
-#             if result['verified']:
-#                 face_match = True
-#                 last_match_time = time.time()  # Update the last match time on success
-#             else:
-#                 face_match = False
-#     except:
-#         pass
-#
-# while True:
-#     ret, frame = cap.read()
-#     if ret:
-#         if counter % 30 == 0:
-#             threading.Thread(target=check_face, args=(frame.copy(),)).start()
-#         counter += 1
-#
-#         with lock:
-#             match_text = "match!" if face_match else "no match!"
-#             if face_match:
-#                 cv2.putText(frame, match_text, (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
-#             else:
-#                 cv2.putText(frame, match_text, (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 3)
-#                 # Check if the last match was more than 7 seconds ago
-#                 if time.time() - last_match_time > 7:
-#                     print("No match for over 7 seconds. Exiting.")
-#                     cap.release()
-#                     cv2.destroyAllWindows()
-#                     sys.exit()  # Terminate the program
-#
-#         cv2.imshow("video", frame)
-#
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-#
-# cap.release()
-# cv2.destroyAllWindows()

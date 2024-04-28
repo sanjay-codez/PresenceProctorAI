@@ -415,6 +415,29 @@ class App(customtkinter.CTk):
         self.setup_table_buttons()  # Create edit and delete buttons when setup tab is shown
 
     def submit_student_info(self):
+        """
+            Validates and submits student information to the CSV file.
+
+            This function performs validation checks on the entered student information, including first name, last name,
+            email, and image upload. It also checks for duplicate entries in the CSV file and appends the new data
+            if no duplicates are found. After successful submission, it clears all entry fields and displays a success
+            message. In case of errors, it displays an appropriate error message.
+
+            Returns:
+                None
+
+            Note:
+                This function requires the existence of entry fields for first name, last name, and email
+                (referenced as 'firstNameEntry', 'lastNameEntry', and 'emailEntry' attributes in the class instance)
+                and a variable for gender selection (referenced as 'genderVar' attribute in the class instance).
+                Additionally, it assumes the existence of a 'student_image_path' attribute for image upload handling,
+                and relies on the 'load_data()' method to refresh the displayed student data after submission.
+
+            Example:
+                To use this function, call it when the user submits the student information in your application interface.
+                For example:
+                    my_app.submit_student_info()
+        """
         # Validation for First and Last Name
         first_name = self.firstNameEntry.get().strip()
         last_name = self.lastNameEntry.get().strip()
@@ -484,6 +507,28 @@ class App(customtkinter.CTk):
         self.load_data()
 
     def create_student_table(self):
+        """
+            Creates a table to display student information in the setup frame.
+
+            This function creates a table using the Treeview widget to display student information, including
+            first name, last name, gender, and email. It also configures a scrollbar for scrolling through
+            the table entries. Additionally, it configures the grid layout for proper placement of the table
+            and scrollbar within the setup frame. Finally, it calls the 'load_data()' method to populate
+            the table with student data.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of a 'setupFrame' attribute in the class instance representing
+                the setup frame in the application layout. Additionally, it relies on the 'load_data()' method
+                to populate the table with student data.
+
+            Example:
+                To use this function, call it when setting up the student table in your application interface.
+                For example:
+                    my_app.create_student_table()
+        """
         # Treeview
         self.tree = ttk.Treeview(self.setupFrame, columns=('First Name', 'Last Name', 'Gender', 'Email'), height=10,
                                  show='headings', style="Treeview")  # Added style argument here
@@ -507,6 +552,28 @@ class App(customtkinter.CTk):
         self.load_data()
 
     def load_data(self):
+        """
+            Loads student data from the CSV file and populates the student table.
+
+            This function reads student data from the CSV file ('student_data.csv') and inserts it into the
+            student table (referenced as 'tree' attribute in the class instance) using the Treeview widget.
+            It clears the current items in the table before inserting new data. After loading data, it calls
+            the 'setup_table_buttons()' method to set up buttons for editing and deleting student records.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of a 'tree' attribute in the class instance representing
+                the student table. Additionally, it relies on the 'setup_table_buttons()' method to set up
+                table buttons after loading data.
+
+            Example:
+                To use this function, call it when loading student data in your application interface.
+                For example:
+                    my_app.load_data()
+
+        """
         # Load data from CSV and insert into the treeview
         try:
             with open('student_data.csv', 'r', newline='') as file:
@@ -521,6 +588,28 @@ class App(customtkinter.CTk):
         self.setup_table_buttons()  # Set up buttons after loading data
 
     def setup_table_buttons(self):
+        """
+            Sets up buttons for editing and deleting student records in the setup frame.
+
+            This function creates and places 'Edit' and 'Delete' buttons in the setup frame (referenced as
+            'setupFrame' attribute in the class instance) using the custom button widget. It adjusts the
+            grid layout to align the buttons properly. If buttons from previous calls exist, they are
+            destroyed before creating new ones.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of 'edit_button' and 'delete_button' attributes in the
+                class instance representing the buttons. Additionally, it relies on the 'edit_student()'
+                and 'delete_student()' methods to handle button click events.
+
+            Example:
+                To use this function, call it when setting up buttons for editing and deleting student
+                records in your application interface.
+                For example:
+                    my_app.setup_table_buttons()
+        """
         # Remove previous buttons if they exist
         try:
             self.edit_button.destroy()
@@ -546,6 +635,32 @@ class App(customtkinter.CTk):
         self.setupFrame.grid_columnconfigure(2, weight=0)  # Remove weight from column where the button is
 
     def edit_student(self):
+        """
+            Allows editing of selected student information.
+
+            This function enables editing of the selected student's information from the student table.
+            It retrieves the selected item's information from the table, creates a popup dialog for editing,
+            and provides entry fields for modifying the first name, last name, email, and gender. It performs
+            validation for each field before saving changes to the CSV file ('student_data.csv'). Duplicate
+            email validation is also performed to ensure uniqueness. After saving changes, it closes the edit
+            window and reloads data in the student table.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of entry fields and radio buttons for editing student
+                information (referenced as 'firstNameEditEntry', 'lastNameEditEntry', 'emailEditEntry',
+                'genderEditVar', 'maleEditRadioButton', and 'femaleEditRadioButton' attributes in the class
+                instance). Additionally, it relies on the 'load_data()' method to reload data in the student
+                table after saving changes.
+
+            Example:
+                To use this function, call it when editing a student's information in your application interface.
+                For example:
+                    my_app.edit_student()
+
+        """
         selected = self.tree.selection()
         if selected:
             # Get the selected item's information
@@ -647,6 +762,30 @@ class App(customtkinter.CTk):
 
 
     def delete_student(self):
+        """
+            Deletes the selected student from the student table and CSV data.
+
+            This function deletes the selected student from the student table and CSV data file
+            ('student_data.csv'). It first confirms the deletion with a dialog box. If confirmed,
+            it attempts to delete the student's associated image file from the 'images_data' directory.
+            After successful deletion of the image file, it removes the student's data from the CSV
+            file and reloads data in the student table. A success message is displayed upon successful
+            deletion.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of a 'tree' attribute in the class instance
+                representing the student table. Additionally, it relies on the 'load_data()' method
+                to reload data in the student table after deletion.
+
+            Example:
+                To use this function, call it when deleting a student's information in your application
+                interface. For example:
+                    my_app.delete_student()
+
+        """
         selected = self.tree.selection()
         if selected:
             item = self.tree.item(selected[0])
@@ -687,6 +826,30 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showinfo("Delete", "Please select a student to delete.")
 
     def upload_student_image(self):
+        """
+            Uploads a student image and saves it to the 'images_data' directory.
+
+            This function opens a file dialog to allow the user to select an image file. It renames
+            the selected image file based on the entered first and last name of the student and saves
+            it to the 'images_data' directory. After successful upload, it stores the path or filename
+            (depending on the needs) for the uploaded image. A success message is displayed upon
+            successful upload.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of entry fields for first name and last name
+                (referenced as 'firstNameEntry' and 'lastNameEntry' attributes in the class instance).
+                Additionally, it assumes the existence of a 'student_image_path' attribute in the class
+                instance to store the path or filename of the uploaded image.
+
+            Example:
+                To use this function, call it when uploading a student image in your application
+                interface. For example:
+                    my_app.upload_student_image()
+
+        """
         # Open a dialog to select an image file
         file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png")])
         if file_path:
@@ -712,6 +875,28 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showinfo("Success", "Image uploaded successfully.")
 
     def setup_reset_attendance_section(self):
+        """
+            Sets up the reset attendance section in the attendance frame.
+
+            This function creates a frame for resetting today's attendance and places it on the left side
+            of the attendance frame. It configures the inner grid of the reset frame and adds labels,
+            entry fields for username and password, and a reset button. Additionally, it sets up the
+            attendance label.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of a 'resetFrame' attribute in the class instance
+                representing the reset frame in the attendance layout. Additionally, it relies on the
+                'reset_attendance()' method to handle the reset attendance functionality.
+
+            Example:
+                To use this function, call it when setting up the reset attendance section in your
+                application interface. For example:
+                    my_app.setup_reset_attendance_section()
+
+        """
         # Create the reset frame and place it on the left side
         self.resetFrame = customtkinter.CTkFrame(self.attendanceFrame, corner_radius=10)
         self.resetFrame.grid(row=1, column=0, padx=100, pady=30, sticky="nw")
@@ -753,6 +938,27 @@ class App(customtkinter.CTk):
         self.attendanceLabel.grid(row=0, column=0, columnspan=3, sticky="new", padx=20, pady=(10, 20))
 
     def reset_attendance(self):
+        """
+            Resets today's attendance to 'Absent' for all students.
+
+            This function prompts the user to enter a username and password for authentication.
+            If the provided credentials are correct, it resets the attendance for all students
+            to 'Absent' in the CSV file ('student_data.csv'). A success message is displayed
+            upon successful reset.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of entry fields for username and password
+                (referenced as 'usernameEntry' and 'passwordEntry' attributes in the class instance).
+
+            Example:
+                To use this function, call it when resetting attendance in your application interface.
+                For example:
+                    my_app.reset_attendance()
+
+        """
         username = self.usernameEntry.get()
         password = self.passwordEntry.get()
 
@@ -781,7 +987,27 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showerror("Access Denied", "The username or password is incorrect.")
 
     def attendance_button_event(self):
+        """
+            Event handler for the attendance button.
 
+            This function clears any previous widgets in the attendance frame, makes the attendance
+            frame visible, configures the grid layout, sets up the attendance label, and calls methods
+            to create the attendance table and set up the reset attendance section.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of the attendance frame (referenced as 'attendanceFrame'
+                attribute in the class instance) and methods to create the attendance table and set up
+                the reset attendance section.
+
+            Example:
+                To use this function, call it when handling the attendance button event in your application
+                interface. For example:
+                    my_app.attendance_button_event()
+
+        """
         # Clear any previous widgets in the frame
         for widget in self.attendanceFrame.winfo_children():
             widget.destroy()
@@ -842,6 +1068,29 @@ class App(customtkinter.CTk):
         self.setup_reset_attendance_section()
 
     def take_attendance(self):
+        """
+            Takes attendance for the entered student.
+
+            This function retrieves the entered first and last names of the student, locates the student
+            in the CSV file, performs face detection using the student's image, and marks the student
+            as 'Present' in the CSV file if the face is detected. A success message is displayed upon
+            successful attendance marking.
+
+            Returns:
+                None
+
+            Note:
+                This function assumes the existence of entry fields for first name and last name
+                (referenced as 'firstNameEntry' and 'lastNameEntry' attributes in the class instance).
+                Additionally, it relies on the 'detect_face_in_video()' function for face detection
+                and the 'speak()' function for speech output.
+
+            Example:
+                To use this function, call it when taking attendance in your application interface.
+                For example:
+                    my_app.take_attendance()
+
+            """
         first_name = self.firstNameEntry.get().strip().capitalize()
         last_name = self.lastNameEntry.get().strip().capitalize()
 
@@ -893,11 +1142,51 @@ class App(customtkinter.CTk):
             #customtkinter.CTkMessageBox.show_error("Error", "Student not detected. Please try again.")
 
     def toggle_fullscreen(self, event=None):
+        """
+            Toggles the fullscreen mode of the application window.
+
+            This method toggles the fullscreen state of the application window by setting or removing
+            the '-fullscreen' attribute. It updates the 'is_fullscreen' attribute accordingly.
+
+            Args:
+                event (Optional): Event object triggering the toggle. Defaults to None.
+
+            Returns:
+                None
+
+            Example:
+                To use this method, bind it to a key event or button click in your application interface.
+                For example:
+                    my_app.bind("<F11>", my_app.toggle_fullscreen)
+                    my_app.bind("<Escape>", my_app.toggle_fullscreen)
+
+        """
         # This method toggles the fullscreen state
         self.is_fullscreen = not self.is_fullscreen  # Just toggling the boolean
         self.attributes("-fullscreen", self.is_fullscreen)
 
     def create_attendance_table(self):
+        """
+            Creates and populates the attendance table.
+
+            This method defines a Treeview widget for displaying the attendance list in the attendance frame.
+            It sets up columns for 'First Name', 'Last Name', and 'Presence', configures column width and alignment,
+            adds a scrollbar for the Treeview, positions the Treeview and scrollbar in the frame, loads attendance
+            data from the CSV file, sorts it alphabetically by first name, and inserts data into the Treeview.
+
+            Returns:
+                None
+
+            Note:
+                This method assumes the existence of an attendance frame (referenced as 'attendanceFrame' attribute
+                in the class instance) and a CSV file named 'student_data.csv' containing attendance data.
+
+            Example:
+                To use this method, call it when initializing the attendance section in your application interface.
+                For example:
+                    my_app.create_attendance_table()
+
+        """
         # Define Treeview for the attendance list
         self.attendance_tree = ttk.Treeview(self.attendanceFrame, columns=("First Name", "Last Name", "Presence"),
                                             height=10, show='headings')
@@ -931,6 +1220,26 @@ class App(customtkinter.CTk):
         self.attendanceFrame.grid_rowconfigure(2, weight=1)  # The next row should stretch to fill space
 
     def load_attendance_data(self):
+        """
+            Loads attendance data from the CSV file and populates the attendance table.
+
+            This method attempts to load attendance data from the 'student_data.csv' file, sorts it alphabetically
+            by first name, and inserts the data into the attendance table. If the CSV file is not found, it handles
+            the error gracefully.
+
+            Returns:
+                None
+
+            Note:
+                This method assumes the existence of a Treeview widget (referenced as 'attendance_tree' attribute
+                in the class instance) for displaying the attendance table.
+
+            Example:
+                To use this method, call it when loading attendance data in your application interface.
+                For example:
+                    my_app.load_attendance_data()
+
+        """
         # Load the attendance data from the CSV and sort it
         try:
             with open('student_data.csv', 'r', newline='') as file:
@@ -945,6 +1254,27 @@ class App(customtkinter.CTk):
             pass
 
     def load_attendance_data_and_draw_graph(self):
+        """
+            Loads attendance data from the CSV file and draws a bar graph based on the attendance.
+
+            This method first clears any previous graph displayed on the canvas. Then, it loads attendance
+            data from the 'student_data.csv' file, counts the number of students marked as 'Present' and 'Absent',
+            and creates a bar graph to represent the attendance analysis. The graph is embedded into the tkinter
+            window for display.
+
+            Returns:
+                None
+
+            Note:
+                This method assumes the existence of a graph frame (referenced as 'graph_frame' attribute
+                in the class instance) and a CSV file named 'student_data.csv' containing attendance data.
+
+            Example:
+                To use this method, call it when loading attendance data and drawing the graph in your application
+                interface. For example:
+                    my_app.load_attendance_data_and_draw_graph()
+
+        """
         # Clear previous graph
         self.canvas.get_tk_widget().forget() if hasattr(self, 'canvas') else None
 
@@ -982,5 +1312,6 @@ class App(customtkinter.CTk):
 
 
 if __name__ == "__main__":
+    speak("the app is starting, please wait for a it to load")
     app = App()
     app.mainloop()
