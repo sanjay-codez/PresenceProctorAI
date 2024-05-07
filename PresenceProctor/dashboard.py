@@ -414,57 +414,59 @@ class App(customtkinter.CTk):
         self.create_student_table()
         self.setup_table_buttons()  # Create edit and delete buttons when setup tab is shown
 
+    def upload_student_image(self):
+        """
+                Temporarily stores a student image path selected by the user.
+
+                This function opens a file dialog to allow the user to select an image file, storing the path
+                temporarily in 'temp_student_image_path'. The image is not saved to 'images_data' until the student
+                information is submitted successfully.
+
+                Returns:
+                    None
+        """
+        # Open a dialog to select an image file
+        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png")])
+        if file_path:
+            # Temporarily store the file path
+            self.temp_student_image_path = file_path
+            tkinter.messagebox.showinfo("Image Selected",
+                                        "Image selected successfully.\nYou can change the image before final submission.")
+
     def submit_student_info(self):
         """
-            Validates and submits student information to the CSV file.
+                Validates and submits student information along with the student's image to the permanent directory.
 
-            This function performs validation checks on the entered student information, including first name, last name,
-            email, and image upload. It also checks for duplicate entries in the CSV file and appends the new data
-            if no duplicates are found. After successful submission, it clears all entry fields and displays a success
-            message. In case of errors, it displays an appropriate error message.
+                This function performs validation checks on the entered student information and the temporary image.
+                After successful submission, it moves the image from temporary storage to the permanent 'images_data' directory,
+                clears all entry fields, and displays a success message. In case of errors, it displays an appropriate error message.
 
-            Returns:
-                None
-
-            Note:
-                This function requires the existence of entry fields for first name, last name, and email
-                (referenced as 'firstNameEntry', 'lastNameEntry', and 'emailEntry' attributes in the class instance)
-                and a variable for gender selection (referenced as 'genderVar' attribute in the class instance).
-                Additionally, it assumes the existence of a 'student_image_path' attribute for image upload handling,
-                and relies on the 'load_data()' method to refresh the displayed student data after submission.
-
-            Example:
-                To use this function, call it when the user submits the student information in your application interface.
-                For example:
-                    my_app.submit_student_info()
+                Returns:
+                    None
         """
+
         # Validation for First and Last Name
         first_name = self.firstNameEntry.get().strip()
         last_name = self.lastNameEntry.get().strip()
         email = self.emailEntry.get().strip()
         gender = self.genderVar.get()
 
-        # First check if an image has been uploaded
-        if not hasattr(self, 'student_image_path'):
-            self.error_message.set("Please upload an image for the student.")
+        # Check if an image has been temporarily selected
+        if not hasattr(self, 'temp_student_image_path'):
+            self.error_message.set("Please select an image for the student.")
             return
 
-        # Continue with validation for the rest of the form
+        # Validation for the rest of the form
         if not first_name or len(first_name) < 2 or not first_name[0].isupper():
-            self.error_message.set(
-                "First Name : Invalid First Name\n First Name : Capitalize first letter\n First Name : Minimum length: 2")
-            self.firstNameEntry.delete(0, tkinter.END)  # Clear the entry field
+            self.error_message.set("Invalid First Name. Ensure it is capitalized and at least 2 characters long.")
             return
 
         if not last_name or len(last_name) < 2 or not last_name[0].isupper():
-            self.error_message.set(
-                "Last Name : Invalid Last Name\n Last Name : Capitalize first letter\n Last Name : Minimum length: 2")
-            self.lastNameEntry.delete(0, tkinter.END)  # Clear the entry field
+            self.error_message.set("Invalid Last Name. Ensure it is capitalized and at least 2 characters long.")
             return
 
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            self.error_message.set("Invalid email address.\nOr left blank")
-            self.emailEntry.delete(0, tkinter.END)  # Clear the entry field
+            self.error_message.set("Invalid email address.")
             return
 
         # Check for duplicate entries
@@ -472,39 +474,45 @@ class App(customtkinter.CTk):
             with open('student_data.csv', 'r', newline='') as file:
                 reader = csv.DictReader(file)
                 for row in reader:
-                    if row['First Name'].strip().lower() == first_name.lower() and \
-                            row['Last Name'].strip().lower() == last_name.lower():
-                        self.error_message.set("Duplicate entry:\n - This student is already added.")
+                    if (row['First Name'].strip().lower() == first_name.lower() and row['Last Name'].strip().lower() == last_name.lower()) or row['Email'].strip().lower() == email.lower():
+                        self.error_message.set("Duplicate entry detected. Either the name or the email is already used.")
                         return
-                    if row['Email'].strip().lower() == email.lower():
-                        self.error_message.set("Duplicate email:\n - This email is already used.")
-                        return
+
         except FileNotFoundError:
             pass  # If the file doesn't exist yet, no need to check for duplicates
 
-        # No duplicate found, append the new data to the CSV file
+
+        # Append the new data to the CSV file and move the image to the permanent directory
         try:
             with open('student_data.csv', 'a', newline='') as file:
                 fieldnames = ['First Name', 'Last Name', 'Gender', 'Email', 'Presence']
                 writer = csv.DictWriter(file, fieldnames=fieldnames)
                 if file.tell() == 0:
                     writer.writeheader()
-                writer.writerow({'First Name': first_name, 'Last Name': last_name, 'Gender': gender, 'Email': email,
-                                 'Presence': "Absent"})
-                self.error_message.set("Student information successfully added.")
+                writer.writerow(
+                    {'First Name': first_name, 'Last Name': last_name, 'Gender': gender, 'Email': email, 'Presence': "Present"})
+
+            # Move the image to the permanent directory
+            new_filename = f"{first_name}_{last_name}.jpg"
+            image_directory = os.path.join(os.getcwd(), "images_data")
+            if not os.path.exists(image_directory):
+                os.makedirs(image_directory)
+            new_file_path = os.path.join(image_directory, new_filename)
+            copyfile(self.temp_student_image_path, new_file_path)
+
+            self.error_message.set("Student information and image successfully added.")
         except Exception as e:
-            self.error_message.set(f"An error occurred while writing to the file: {e}")
+            self.error_message.set(f"An error occurred: {e}")
             return
 
-        # Clear the stored image path after successful submission
-        del self.student_image_path
-
-        # Clear all fields after successful submission or error
+        # Clear all fields and temporary image path after successful submission
         self.firstNameEntry.delete(0, tkinter.END)
         self.lastNameEntry.delete(0, tkinter.END)
         self.emailEntry.delete(0, tkinter.END)
         self.genderVar.set("M")
+        del self.temp_student_image_path
         self.load_data()
+
 
     def create_student_table(self):
         """
@@ -825,54 +833,7 @@ class App(customtkinter.CTk):
         else:
             tkinter.messagebox.showinfo("Delete", "Please select a student to delete.")
 
-    def upload_student_image(self):
-        """
-            Uploads a student image and saves it to the 'images_data' directory.
 
-            This function opens a file dialog to allow the user to select an image file. It renames
-            the selected image file based on the entered first and last name of the student and saves
-            it to the 'images_data' directory. After successful upload, it stores the path or filename
-            (depending on the needs) for the uploaded image. A success message is displayed upon
-            successful upload.
-
-            Returns:
-                None
-
-            Note:
-                This function assumes the existence of entry fields for first name and last name
-                (referenced as 'firstNameEntry' and 'lastNameEntry' attributes in the class instance).
-                Additionally, it assumes the existence of a 'student_image_path' attribute in the class
-                instance to store the path or filename of the uploaded image.
-
-            Example:
-                To use this function, call it when uploading a student image in your application
-                interface. For example:
-                    my_app.upload_student_image()
-
-        """
-        # Open a dialog to select an image file
-        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png")])
-        if file_path:
-            first_name = self.firstNameEntry.get().strip().capitalize()
-            last_name = self.lastNameEntry.get().strip().capitalize()
-
-            if not (first_name and last_name):
-                tkinter.messagebox.showerror("Error", "Please enter the first and last name before uploading an image.")
-                return
-
-            # Rename the image and save it to the images_data directory
-            new_filename = f"{first_name}_{last_name}.jpg"
-            image_directory = os.path.join(os.getcwd(), "images_data")
-            if not os.path.exists(image_directory):
-                os.makedirs(image_directory)
-
-            new_file_path = os.path.join(image_directory, new_filename)
-            copyfile(file_path, new_file_path)
-
-            # Store the path or just the filename depending on your needs
-            self.student_image_path = new_file_path  # or just `new_filename`
-
-            tkinter.messagebox.showinfo("Success", "Image uploaded successfully.")
 
     def setup_reset_attendance_section(self):
         """
