@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e240925a-2317-41df-8997-7dcbc6267e7d" name="Changes" comment="added email functionality works but there is daily limit of 100 emails which is ok">
-      <change afterPath="$PROJECT_DIR$/PresenceProctor/stuff.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PresenceProctor/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/PresenceProctor/dashboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PresenceProctor/email_stuff.py" beforeDir="false" afterPath="$PROJECT_DIR$/PresenceProctor/email_stuff.py" afterDir="false" />
-    </list>
+    <list default="true" id="e240925a-2317-41df-8997-7dcbc6267e7d" name="Changes" comment="added email functionality works but there is daily limit of 100 emails which is ok" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -261,7 +256,23 @@
       <option name="project" value="LOCAL" />
       <updated>1715215390298</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="added email functionality works but there is daily limit of 100 emails which is ok">
+      <option name="closed" value="true" />
+      <created>1715216261021</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1715216261021</updated>
+    </task>
+    <task id="LOCAL-00016" summary="added email functionality works but there is daily limit of 100 emails which is ok">
+      <option name="closed" value="true" />
+      <created>1715216272732</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1715216272732</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
