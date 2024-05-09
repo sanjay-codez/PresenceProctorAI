@@ -27,6 +27,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import smtplib
 from email.mime.text import MIMEText
+import base64
 
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
@@ -81,7 +82,14 @@ def send_email(subject, body, to_email):
     server.ehlo()
     server.starttls()
     server.ehlo()
-    server.login('apikey', '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')
+    password = None
+    with open('lol.txt') as file:
+        encoded_api_key = file.read()
+        password = base64.b64decode(encoded_api_key.encode()).decode()
+
+
+
+    server.login('apikey', password)
     server.sendmail(sender_email, to_email, message.as_string())
     server.quit()
     print("Email sent!")
@@ -1318,7 +1326,7 @@ class App(customtkinter.CTk):
                         )
                         send_email(subject, body, email)
 
-                        #("Error", f"An error occurred: {e}")
+
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {e}")
             if 'reached the maximum amount' in str(e):
