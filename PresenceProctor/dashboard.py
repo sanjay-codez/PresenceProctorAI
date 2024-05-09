@@ -27,12 +27,17 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import smtplib
 from email.mime.text import MIMEText
-import base64
+from dotenv import load_dotenv
+
+
 
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standar d), "green", "dark-blue"
 username = "Mr. Gilbert"
+
+def configure():
+    load_dotenv()
 
 # speaking audio function cool
 def speak(str1):
@@ -82,18 +87,7 @@ def send_email(subject, body, to_email):
     server.ehlo()
     server.starttls()
     server.ehlo()
-    crow = None
-    part_one = "SG."
-    part_two = "mTWRYDhrRwCf1I0aPUta2w.uv_"
-    part_three = "1YmmIIC8LSYP68-tSVuiGXkf81kHrt-Vr7N9Yo2M"
-    api_key = part_one + part_two + part_three
-    # with open('lol.txt') as file:
-    #     encoded_api_key = file.read()
-    #     crow = base64.b64decode(encoded_api_key.encode()).decode()
-    # works
-
-
-    server.login('apikey', api_key)
+    server.login('apikey', os.getenv('shhh'))
     server.sendmail(sender_email, to_email, message.as_string())
     server.quit()
     print("Email sent!")
@@ -104,6 +98,8 @@ class App(customtkinter.CTk):
 
     def __init__(self):
         super().__init__()
+
+        configure()
 
         # Initialize the fullscreen state
         self.is_fullscreen = False  # Start with windowed mode
