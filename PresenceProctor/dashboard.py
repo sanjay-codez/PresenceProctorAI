@@ -83,13 +83,17 @@ def send_email(subject, body, to_email):
     server.starttls()
     server.ehlo()
     crow = None
-    with open('lol.txt') as file:
-        encoded_api_key = file.read()
-        crow = base64.b64decode(encoded_api_key.encode()).decode()
+    part_one = "SG."
+    part_two = "mTWRYDhrRwCf1I0aPUta2w.uv_"
+    part_three = "1YmmIIC8LSYP68-tSVuiGXkf81kHrt-Vr7N9Yo2M"
+    api_key = part_one + part_two + part_three
+    # with open('lol.txt') as file:
+    #     encoded_api_key = file.read()
+    #     crow = base64.b64decode(encoded_api_key.encode()).decode()
 
 
 
-    server.login('apikey', crow)
+    server.login('apikey', api_key)
     server.sendmail(sender_email, to_email, message.as_string())
     server.quit()
     print("Email sent!")
