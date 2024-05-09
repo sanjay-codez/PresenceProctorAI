@@ -90,7 +90,7 @@ def send_email(subject, body, to_email):
     # with open('lol.txt') as file:
     #     encoded_api_key = file.read()
     #     crow = base64.b64decode(encoded_api_key.encode()).decode()
-
+    # works
 
 
     server.login('apikey', api_key)
