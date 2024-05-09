@@ -11,7 +11,7 @@ import sys
 customtkinter.set_appearance_mode("dark")
 
 
-# login app class
+# login app class ( updated )
 class App(customtkinter.CTk):
     width = 500
     height = 720
