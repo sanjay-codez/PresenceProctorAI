@@ -1,0 +1,7 @@
+customtkinter
+Pillow
+requests
+matplotlib
+pywin32
+opencv-python
+deepface

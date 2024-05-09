@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e240925a-2317-41df-8997-7dcbc6267e7d" name="Changes" comment="Made face_recognition.py as a module with useable function &#10;&#10;Also, face_detect_temp is a sample use python program using the function">
+    <list default="true" id="e240925a-2317-41df-8997-7dcbc6267e7d" name="Changes" comment="add student bug fixed">
+      <change afterPath="$PROJECT_DIR$/PresenceProctor/email_stuff.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PresenceProctor/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/PresenceProctor/dashboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PresenceProctor/student_data.csv" beforeDir="false" afterPath="$PROJECT_DIR$/PresenceProctor/student_data.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,7 +36,7 @@
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
         <option name="accountId" value="a8ad9c6d-734c-4781-b94a-ebfcf7c6dabf" />
-        <option name="url" value="https://github.com/skrishnan-1/PresenceProctorAI.git" />
+        <option name="url" value="https://github.com/sanjay-codez/PresenceProctorAI.git" />
       </UrlAndAccount>
     </option>
   </component>
@@ -62,6 +65,7 @@
       <recent name="C:\Users\sanja\Documents\GitHub\PresenceProctorAI\PresenceProctor" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\sanja\Documents\GitHub\PresenceProctorAI" />
       <recent name="C:\Users\sanja\Documents\GitHub\PresenceProctorAI\PresenceProctor\images_data" />
     </key>
   </component>
@@ -79,6 +83,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PresenceProctor/dashboard.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="email_stuff" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="PresenceProctorAI" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/PresenceProctor" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/PresenceProctor/email_stuff.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -111,6 +136,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.dashboard" />
+        <item itemvalue="Python.email_stuff" />
         <item itemvalue="Python.face_recognition" />
       </list>
     </recent_temporary>
@@ -212,7 +238,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712535854502</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="add student bug fixed">
+      <option name="closed" value="true" />
+      <created>1715112583849</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1715112583849</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -224,6 +258,7 @@
     <MESSAGE value="updated facial_recognition_learning.py" />
     <MESSAGE value="face_recognition.py fixed" />
     <MESSAGE value="Made face_recognition.py as a module with useable function &#10;&#10;Also, face_detect_temp is a sample use python program using the function" />
-    <option name="LAST_COMMIT_MESSAGE" value="Made face_recognition.py as a module with useable function &#10;&#10;Also, face_detect_temp is a sample use python program using the function" />
+    <MESSAGE value="add student bug fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="add student bug fixed" />
   </component>
 </project>

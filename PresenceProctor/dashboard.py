@@ -4,8 +4,11 @@ system using tkinter and customtkinter libraries.
 It provides functions and classes to manage attendance tracking, student setup, and system settings with features
 such as face recognition, speech output, and data management via CSV files.
 """
-
+import sys
 # import necessary modules
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import tkinter as tk
 from tkinter import ttk
 import tkinter.messagebox
@@ -22,10 +25,13 @@ from face_recognition import detect_face_in_video
 from win32com.client import Dispatch
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import smtplib
+from email.mime.text import MIMEText
+
 
 customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standar d), "green", "dark-blue"
-username = "Teacher"
+username = "Mr. Gilbert"
 
 # speaking audio function cool
 def speak(str1):
@@ -63,6 +69,22 @@ def get_current_date():
     current_datetime = datetime.fromisoformat(datetime_string)
     return current_datetime.strftime('%m/%d/%Y')
 
+def send_email(subject, body, to_email):
+
+    sender_email = "presenceproctor@gmail.com"  # Your SendGrid verified sender email
+    message = MIMEText(body)
+    message['From'] = sender_email
+    message['To'] = to_email
+    message['Subject'] = subject
+
+    server = smtplib.SMTP('smtp.sendgrid.net', 587)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login('apikey', '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')
+    server.sendmail(sender_email, to_email, message.as_string())
+    server.quit()
+    print("Email sent!")
 
 class App(customtkinter.CTk):
     width = 1920
@@ -140,7 +162,11 @@ class App(customtkinter.CTk):
         self.sidebar_button_2.grid(row=5, column=0, padx=20, pady=10)
         self.sidebar_button_3 = customtkinter.CTkButton(self.sidebar_frame, text="Setup",
                                                         command=self.setup_button_event)
+
+        self.sidebar_button_4 = customtkinter.CTkButton(self.sidebar_frame, text="Send Emails\n   to    \nAbsent Students",
+                                                        command=self.send_emails_to_absent_students)
         self.sidebar_button_3.grid(row=6, column=0, padx=20, pady=10)
+        self.sidebar_button_4.grid(row=7, column=0, padx=20, pady=10)
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=9, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_optionmenu = customtkinter.CTkOptionMenu(self.sidebar_frame,
@@ -400,11 +426,6 @@ class App(customtkinter.CTk):
                 in the class instance representing the frames in the application layout. Additionally, it relies
                 on the 'create_student_table()' and 'setup_table_buttons()' methods to create the student table
                 and setup table buttons, which should be defined in the class.
-
-            Example:
-                To use this function, call it when the setup button is clicked in your application interface.
-                For example:
-                    my_app.setup_button_event()
         """
         # Hide the other frames
         self.homeFrame.grid_forget()
@@ -1077,6 +1098,9 @@ class App(customtkinter.CTk):
             tkinter.messagebox.showinfo("Error", "Student not found in the database.")
             return
 
+
+
+
         # Face detection
         if student_image_path and detect_face_in_video(student_image_path):
             # Update CSV to mark student as present
@@ -1270,9 +1294,39 @@ class App(customtkinter.CTk):
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
+    def send_emails_to_absent_students(self):
+
+        filename = 'student_data.csv'
+        try:
+            with open(filename, newline='') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    if row['Presence'] == 'Absent':
+                        first_name = row['First Name']
+                        last_name = row['Last Name']
+                        email = row['Email']
+                        teacher_name = username  # Use the teacher's name from the class variable
+                        subject = "Attendance Alert: Absence Notification"
+                        body = (
+                            f"Hello {first_name} {last_name},\n\n"
+                            "Your absence was recorded in our recent session. "
+                            "As a reminder, consistent attendance is crucial to your academic success and understanding of the material. "
+                            f"Please ensure to check with your teacher, {username}, to address this absence as soon as possible. "
+                            "If you believe there has been a mistake, or if you were marked absent accidentally, "
+                            f"please do not hesitate to reach out directly to {username} to clarify your attendance status. "
+                            "\n\nThank you for your attention to this matter.\n\nRegards,\nPresenceProctor"
+                        )
+                        send_email(subject, body, email)
+
+                        #("Error", f"An error occurred: {e}")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+            if 'reached the maximum amount' in str(e):
+                messagebox.showerror("Error", "You have reached the maximum amount of emails per day.")
+
+        messagebox.showinfo("Success!", "Emails have been sent!")
 
 
 if __name__ == "__main__":
-    speak("the app is starting, please wait for a it to load")
     app = App()
     app.mainloop()
