@@ -10,7 +10,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, simpledialog
 import tkinter.messagebox
 import customtkinter
 from PIL import Image, ImageTk
@@ -75,22 +75,25 @@ def get_current_date():
     current_datetime = datetime.fromisoformat(datetime_string)
     return current_datetime.strftime('%m/%d/%Y')
 
-def send_email(subject, body, to_email):
+def send_email(subject, body, to_email, user_input):
 
-    sender_email = "presenceproctor@gmail.com"  # Your SendGrid verified sender email
-    message = MIMEText(body)
-    message['From'] = sender_email
-    message['To'] = to_email
-    message['Subject'] = subject
+    if user_input:
 
-    server = smtplib.SMTP('smtp.sendgrid.net', 587)
-    server.ehlo()
-    server.starttls()
-    server.ehlo()
-    server.login('apikey', os.getenv('shhh'))
-    server.sendmail(sender_email, to_email, message.as_string())
-    server.quit()
-    print("Email sent!")
+        sender_email = "presenceproctor@gmail.com"  # Your SendGrid verified sender email
+        message = MIMEText(body)
+        message['From'] = sender_email
+        message['To'] = to_email
+        message['Subject'] = subject
+
+        server = smtplib.SMTP('smtp.sendgrid.net', 587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login('apikey', user_input)
+        server.sendmail(sender_email, to_email, message.as_string())
+        server.quit()
+        print("Email sent!")
+
 
 class App(customtkinter.CTk):
     width = 1920
@@ -1303,7 +1306,7 @@ class App(customtkinter.CTk):
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     def send_emails_to_absent_students(self):
-
+        da_input = tk.simpledialog.askstring("Input", "Enter the API key")
         filename = 'student_data.csv'
         try:
             with open(filename, newline='') as csvfile:
@@ -1324,7 +1327,7 @@ class App(customtkinter.CTk):
                             f"please do not hesitate to reach out directly to {username} to clarify your attendance status. "
                             "\n\nThank you for your attention to this matter.\n\nRegards,\nPresenceProctor"
                         )
-                        send_email(subject, body, email)
+                        send_email(subject, body, email, da_input)
 
 
         except Exception as e:
