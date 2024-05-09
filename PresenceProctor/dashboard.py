@@ -82,7 +82,7 @@ def send_email(subject, body, to_email):
     server.ehlo()
     server.starttls()
     server.ehlo()
-    password = None
+
     with open('lol.txt') as file:
         encoded_api_key = file.read()
         password = base64.b64decode(encoded_api_key.encode()).decode()
