@@ -4,11 +4,8 @@ system using tkinter and customtkinter libraries.
 It provides functions and classes to manage attendance tracking, student setup, and system settings with features
 such as face recognition, speech output, and data management via CSV files.
 """
-import sys
+
 # import necessary modules
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import tkinter as tk
 from tkinter import ttk, simpledialog
 import tkinter.messagebox
@@ -27,7 +24,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import smtplib
 from email.mime.text import MIMEText
-from dotenv import load_dotenv
+
 
 
 
@@ -36,8 +33,7 @@ customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark",
 customtkinter.set_default_color_theme("green")  # Themes: "blue" (standar d), "green", "dark-blue"
 username = "Mr. Gilbert"
 
-def configure():
-    load_dotenv()
+
 
 # speaking audio function cool
 def speak(str1):
@@ -102,10 +98,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
-        configure()
-
-        # Initialize the fullscreen state
-        self.is_fullscreen = False  # Start with windowed mode
+        self.is_fullscreen = False
 
         # Set initial fullscreen mode
         self.toggle_fullscreen()
@@ -466,37 +459,21 @@ class App(customtkinter.CTk):
                                         "Image selected successfully.\nYou can change the image before final submission.")
 
     def submit_student_info(self):
-        """
-                Validates and submits student information along with the student's image to the permanent directory.
-
-                This function performs validation checks on the entered student information and the temporary image.
-                After successful submission, it moves the image from temporary storage to the permanent 'images_data' directory,
-                clears all entry fields, and displays a success message. In case of errors, it displays an appropriate error message.
-
-                Returns:
-                    None
-        """
-
-        # Validation for First and Last Name
         first_name = self.firstNameEntry.get().strip()
         last_name = self.lastNameEntry.get().strip()
         email = self.emailEntry.get().strip()
         gender = self.genderVar.get()
 
-        # Check if an image has been temporarily selected
         if not hasattr(self, 'temp_student_image_path'):
             self.error_message.set("Please select an image for the student.")
             return
-
         # Validation for the rest of the form
         if not first_name or len(first_name) < 2 or not first_name[0].isupper():
             self.error_message.set("Invalid First Name. Ensure it is capitalized and at least 2 characters long.")
             return
-
         if not last_name or len(last_name) < 2 or not last_name[0].isupper():
             self.error_message.set("Invalid Last Name. Ensure it is capitalized and at least 2 characters long.")
             return
-
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             self.error_message.set("Invalid email address.")
             return
@@ -802,30 +779,7 @@ class App(customtkinter.CTk):
 
 
     def delete_student(self):
-        """
-            Deletes the selected student from the student table and CSV data.
 
-            This function deletes the selected student from the student table and CSV data file
-            ('student_data.csv'). It first confirms the deletion with a dialog box. If confirmed,
-            it attempts to delete the student's associated image file from the 'images_data' directory.
-            After successful deletion of the image file, it removes the student's data from the CSV
-            file and reloads data in the student table. A success message is displayed upon successful
-            deletion.
-
-            Returns:
-                None
-
-            Note:
-                This function assumes the existence of a 'tree' attribute in the class instance
-                representing the student table. Additionally, it relies on the 'load_data()' method
-                to reload data in the student table after deletion.
-
-            Example:
-                To use this function, call it when deleting a student's information in your application
-                interface. For example:
-                    my_app.delete_student()
-
-        """
         selected = self.tree.selection()
         if selected:
             item = self.tree.item(selected[0])
@@ -868,28 +822,7 @@ class App(customtkinter.CTk):
 
 
     def setup_reset_attendance_section(self):
-        """
-            Sets up the reset attendance section in the attendance frame.
 
-            This function creates a frame for resetting today's attendance and places it on the left side
-            of the attendance frame. It configures the inner grid of the reset frame and adds labels,
-            entry fields for username and password, and a reset button. Additionally, it sets up the
-            attendance label.
-
-            Returns:
-                None
-
-            Note:
-                This function assumes the existence of a 'resetFrame' attribute in the class instance
-                representing the reset frame in the attendance layout. Additionally, it relies on the
-                'reset_attendance()' method to handle the reset attendance functionality.
-
-            Example:
-                To use this function, call it when setting up the reset attendance section in your
-                application interface. For example:
-                    my_app.setup_reset_attendance_section()
-
-        """
         # Create the reset frame and place it on the left side
         self.resetFrame = customtkinter.CTkFrame(self.attendanceFrame, corner_radius=10)
         self.resetFrame.grid(row=1, column=0, padx=100, pady=30, sticky="nw")
@@ -931,27 +864,7 @@ class App(customtkinter.CTk):
         self.attendanceLabel.grid(row=0, column=0, columnspan=3, sticky="new", padx=20, pady=(10, 20))
 
     def reset_attendance(self):
-        """
-            Resets today's attendance to 'Absent' for all students.
 
-            This function prompts the user to enter a username and password for authentication.
-            If the provided credentials are correct, it resets the attendance for all students
-            to 'Absent' in the CSV file ('student_data.csv'). A success message is displayed
-            upon successful reset.
-
-            Returns:
-                None
-
-            Note:
-                This function assumes the existence of entry fields for username and password
-                (referenced as 'usernameEntry' and 'passwordEntry' attributes in the class instance).
-
-            Example:
-                To use this function, call it when resetting attendance in your application interface.
-                For example:
-                    my_app.reset_attendance()
-
-        """
         username = self.usernameEntry.get()
         password = self.passwordEntry.get()
 
