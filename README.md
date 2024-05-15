@@ -7,8 +7,7 @@ git clone (the link)
 **2. Navigate to the project directory:**
 
 cd student-attendance-system
-username = username
-password = password
+username = username and password = password
 
 **3. Install the required dependencies:**
 
@@ -18,7 +17,7 @@ pip install -r requirements.txt
 Open main.py in your preferred Python editor or IDE.
 
 
-Upon running main.py, you will be prompted to enter your username and password. Use the credentials you specified in step 2.
+Upon running main.py, you will be prompted to enter your username and password. Use the credentials  specified in step 2.
 
 Once logged in, you can add, edit, and delete student information.
 
