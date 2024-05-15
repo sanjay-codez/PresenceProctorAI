@@ -2,11 +2,13 @@ README
 
 **1. Clone this repository to your local machine:**
 
-git clone https://github.com/yourusername/student-attendance-system.git
+git clone (the link)
 
 **2. Navigate to the project directory:**
 
 cd student-attendance-system
+username = username
+password = password
 
 **3. Install the required dependencies:**
 
@@ -15,11 +17,6 @@ pip install -r requirements.txt
 **Usage**
 Open main.py in your preferred Python editor or IDE.
 
-Modify the username and password variables in main.py with your desired credentials:
-
-username = "your_username"
-password = "your_password"
-Run main.py:
 
 Upon running main.py, you will be prompted to enter your username and password. Use the credentials you specified in step 2.
 
