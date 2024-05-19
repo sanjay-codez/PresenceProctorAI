@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e240925a-2317-41df-8997-7dcbc6267e7d" name="Changes" comment="added email functionality works but there is daily limit of 100 emails which is ok if u need the api key i have it">
+    <list default="true" id="e240925a-2317-41df-8997-7dcbc6267e7d" name="Changes" comment="code done">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PresenceProctor/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/PresenceProctor/dashboard.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +65,7 @@
       <recent name="C:\Users\sanja\Documents\GitHub\PresenceProctorAI\PresenceProctor\images_data" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.dashboard">
+  <component name="RunManager" selected="Python.main">
     <configuration name="dashboard" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PresenceProctorAI" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -153,8 +152,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.dashboard" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.dashboard" />
         <item itemvalue="Python.email_stuff" />
         <item itemvalue="Python.face_recognition" />
       </list>
@@ -393,7 +392,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715286981963</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="code done">
+      <option name="closed" value="true" />
+      <created>1715812662354</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1715812662354</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -419,6 +426,7 @@
     <MESSAGE value="add student bug fixed" />
     <MESSAGE value="added email functionality works but there is daily limit of 100 emails which is ok" />
     <MESSAGE value="added email functionality works but there is daily limit of 100 emails which is ok if u need the api key i have it" />
-    <option name="LAST_COMMIT_MESSAGE" value="added email functionality works but there is daily limit of 100 emails which is ok if u need the api key i have it" />
+    <MESSAGE value="code done" />
+    <option name="LAST_COMMIT_MESSAGE" value="code done" />
   </component>
 </project>

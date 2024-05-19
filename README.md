@@ -11,7 +11,7 @@ username = username and password = password
 
 **3. Install the required dependencies:**
 
-pip install -r requirements.txt
+pip install the modules needed
 
 **Usage**
 Open main.py in your preferred Python editor or IDE.
